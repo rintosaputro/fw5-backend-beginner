@@ -58,9 +58,9 @@ const editVehicle = (req, res) => {
         message: 'Edited Succesfully',
       });
     }
-    return res.status(404).json({
+    return res.status(500).json({
       success: false,
-      message: `Edited Failed, vehicle not found with id ${id}`,
+      message: 'Edited Failed',
     });
   });
 };
@@ -74,9 +74,9 @@ const deleteVehicle = (req, res) => {
         message: 'Deleted Successfully',
       });
     }
-    return res.status(404).json({
+    return res.status(500).json({
       success: false,
-      message: `Delete Failed, vehicle not found with id ${id}`,
+      message: 'Deleted Failed',
     });
   });
 };
