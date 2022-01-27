@@ -60,7 +60,7 @@ const editVehicle = (req, res) => {
     }
     return res.status(500).json({
       success: false,
-      message: 'Edited Failed',
+      message: 'Edit Failed',
     });
   });
 };
@@ -76,7 +76,7 @@ const deleteVehicle = (req, res) => {
     }
     return res.status(500).json({
       success: false,
-      message: 'Deleted Failed',
+      message: 'Delete Failed',
     });
   });
 };
