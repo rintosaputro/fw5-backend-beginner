@@ -29,6 +29,8 @@ const addVehicle = (req, res) => {
   const newData = {
     type: req.body.type,
     brand: req.body.brand,
+    capacity: req.body.capacity,
+    location: req.body.location,
     price: req.body.price,
     isAvailable: req.body.isAvailable,
   };
@@ -43,6 +45,8 @@ const editVehicle = (req, res) => {
   const dataEdit = {
     type: req.body.type,
     brand: req.body.brand,
+    capacity: req.body.capacity,
+    location: req.body.location,
     price: req.body.price,
     isAvailable: req.body.isAvailable,
   };
