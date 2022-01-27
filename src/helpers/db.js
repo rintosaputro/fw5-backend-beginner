@@ -7,6 +7,9 @@ const conn = mysql.createConnection({
   database: 'rent_vehicles'
 })
 
-conn.connect()
+conn.connect(err => {
+  if(err) throw err
+  console.log('Successfully connected to database')
+})
 
 module.exports = conn

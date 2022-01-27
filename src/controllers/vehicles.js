@@ -22,7 +22,7 @@ const getVehicle = (req, res) => {
     } else {
       return res.status(404).json({
         success: false,
-        message: 'Vehicle not found'
+        message: `vehicle not found with id ${id}`
       })
     }
   })
@@ -30,6 +30,7 @@ const getVehicle = (req, res) => {
 
 const addVehicle = (req, res) => {
   const newData = {
+    type: req.body.type,
     brand: req.body.brand,
     price: req.body.price,
     isAvailable: req.body.isAvailable
@@ -45,6 +46,7 @@ const addVehicle = (req, res) => {
 
 const editVehicle = (req, res) => {
   const dataEdit = {
+    type: req.body.type,
     brand: req.body.brand,
     price: req.body.price,
     isAvailable: req.body.isAvailable
@@ -59,7 +61,7 @@ const editVehicle = (req, res) => {
     } else {
       return res.status(404).json({
         success: false,
-        message: 'Edited Failed'
+        message: `Edited Failed, vehicle not found with id ${id}`
       })
     } 
   })
@@ -76,7 +78,7 @@ const deleteVehicle = (req, res) => {
     } else {
       return res.status(404).json({
         success: false,
-        message: 'Deleted Failed'
+        message: `Deleted Failed, vehicle not found with id ${id}`
       })
     }
   })
