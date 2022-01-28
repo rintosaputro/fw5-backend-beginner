@@ -49,8 +49,33 @@ const addUser = (req, res) => {
   });
 };
 
+const editUser = (req, res) => {
+  const userEdit = {
+    name: req.body.name,
+    display_name: req.body.display_name,
+    email: req.body.email,
+    phone_number: req.body.phone_number,
+    address: req.body.address,
+    birthdate: req.body.birthdate,
+  };
+  const { id } = req.params;
+  userModel.editUser(userEdit, id, (results) => {
+    if (results.affectedRows > 0) {
+      return res.json({
+        success: true,
+        message: 'User successfully updated',
+      });
+    }
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update user',
+    });
+  });
+};
+
 module.exports = {
   getUsers,
   getUser,
   addUser,
+  editUser,
 };

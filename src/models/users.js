@@ -21,8 +21,16 @@ const addUser = (data, cb) => {
   });
 };
 
+const editUser = (data, id, cb) => {
+  db.query('UPDATE users SET ? WHERE id=?', [data, id], (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 module.exports = {
   getUsers,
   getUser,
   addUser,
+  editUser,
 };
