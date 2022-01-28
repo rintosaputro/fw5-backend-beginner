@@ -34,11 +34,19 @@ const addVehicle = (req, res) => {
     price: req.body.price,
     isAvailable: req.body.isAvailable,
   };
-  vehicleModel.addVehicle(newData, () => res.json({
-    success: true,
-    message: 'Successfully added',
-    data: newData,
-  }));
+  vehicleModel.addVehicle(newData, (results) => {
+    if (results.affectedRows > 0) {
+      return res.json({
+        success: true,
+        message: 'Successfully added',
+        data: newData,
+      });
+    }
+    return res.json({
+      success: false,
+      message: 'Failed to adding new vehicle',
+    });
+  });
 };
 
 const editVehicle = (req, res) => {
@@ -60,7 +68,7 @@ const editVehicle = (req, res) => {
     }
     return res.status(500).json({
       success: false,
-      message: 'Edit Failed',
+      message: `Failed to edit vehicle with id ${id}`,
     });
   });
 };
@@ -76,7 +84,7 @@ const deleteVehicle = (req, res) => {
     }
     return res.status(500).json({
       success: false,
-      message: 'Delete Failed',
+      message: `Failed to delete vehicle with id ${id}`,
     });
   });
 };

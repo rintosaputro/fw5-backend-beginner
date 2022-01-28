@@ -15,9 +15,9 @@ const getVehicle = (id, cb) => {
 };
 
 const addVehicle = (data, cb) => {
-  db.query('INSERT INTO vehicles SET ?', [data], (err) => {
+  db.query('INSERT INTO vehicles SET ?', [data], (err, res) => {
     if (err) throw err;
-    cb();
+    cb(res);
   });
 };
 
