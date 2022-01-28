@@ -7,6 +7,14 @@ const getUsers = (cb) => {
   });
 };
 
+const getUser = (id, cb) => {
+  db.query('SELECT * FROM users WHERE id=?', [id], (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 module.exports = {
   getUsers,
+  getUser,
 };

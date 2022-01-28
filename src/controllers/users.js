@@ -8,6 +8,24 @@ const getUsers = (req, res) => {
   }));
 };
 
+const getUser = (req, res) => {
+  const { id } = req.params;
+  userModel.getUser(id, (results) => {
+    if (results.length > 0) {
+      return res.json({
+        success: true,
+        message: `Detail user with id ${id}`,
+        results,
+      });
+    }
+    return res.status(404).json({
+      success: false,
+      message: `User with id ${id} not found`,
+    });
+  });
+};
+
 module.exports = {
   getUsers,
+  getUser,
 };
