@@ -28,9 +28,17 @@ const editUser = (data, id, cb) => {
   });
 };
 
+const deleteUser = (id, cb) => {
+  db.query('DELETE FROM users WHERE id=?', [id], (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 module.exports = {
   getUsers,
   getUser,
   addUser,
   editUser,
+  deleteUser,
 };

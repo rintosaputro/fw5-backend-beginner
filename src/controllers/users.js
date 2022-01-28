@@ -73,9 +73,26 @@ const editUser = (req, res) => {
   });
 };
 
+const deleteUser = (req, res) => {
+  const { id } = req.params;
+  userModel.deleteUser(id, (results) => {
+    if (results.affectedRows > 0) {
+      return res.json({
+        success: true,
+        message: `User with id ${id} successfully deleted`,
+      });
+    }
+    return res.status(500).json({
+      success: false,
+      message: `Failed to delete user with id ${id}`,
+    });
+  });
+};
+
 module.exports = {
   getUsers,
   getUser,
   addUser,
   editUser,
+  deleteUser,
 };
