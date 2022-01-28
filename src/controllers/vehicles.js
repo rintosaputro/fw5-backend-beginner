@@ -42,7 +42,7 @@ const addVehicle = (req, res) => {
         data: newData,
       });
     }
-    return res.json({
+    return res.status(500).json({
       success: false,
       message: 'Failed to adding new vehicle',
     });

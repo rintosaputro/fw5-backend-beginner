@@ -14,7 +14,15 @@ const getUser = (id, cb) => {
   });
 };
 
+const addUser = (data, cb) => {
+  db.query('INSERT INTO users SET ?', [data], (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 module.exports = {
   getUsers,
   getUser,
+  addUser,
 };
