@@ -26,44 +26,35 @@ const getVehicle = (req, res) => {
 };
 
 const addVehicle = (req, res) => {
-  const newData = {
-    type: req.body.type,
-    brand: req.body.brand,
-    capacity: req.body.capacity,
-    location: req.body.location,
-    price: req.body.price,
-    isAvailable: req.body.isAvailable,
-  };
-  vehicleModel.addVehicle(newData, (results) => {
-    if (results.affectedRows > 0) {
-      return res.json({
-        success: true,
-        message: 'Successfully added',
-        data: newData,
+  const {
+    type, brand, capacity, location, price, isAvailable,
+  } = req.body;
+  if (type && brand && capacity && location && price && isAvailable) {
+    return vehicleModel.addVehicle(req.body, () => {
+      vehicleModel.getVehicles((results) => {
+        const newVehicle = results.length - 1;
+        res.json({
+          success: true,
+          message: 'Successfully added new vehicle',
+          vehicle: results[newVehicle],
+        });
       });
-    }
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to adding new vehicle',
     });
+  }
+  return res.status(500).json({
+    success: false,
+    message: 'Failed to add new vehicle',
   });
 };
 
 const editVehicle = (req, res) => {
-  const dataEdit = {
-    type: req.body.type,
-    brand: req.body.brand,
-    capacity: req.body.capacity,
-    location: req.body.location,
-    price: req.body.price,
-    isAvailable: req.body.isAvailable,
-  };
   const { id } = req.params;
-  vehicleModel.editVehicle(dataEdit, id, (results) => {
+  vehicleModel.editVehicle(req.body, id, (results) => {
     if (results.changedRows > 0) {
       return res.json({
         success: true,
         message: 'Edited Succesfully',
+        vehicle: { id_vehicle: id, ...req.body },
       });
     }
     return res.status(500).json({
@@ -79,7 +70,7 @@ const deleteVehicle = (req, res) => {
     if (results.affectedRows > 0) {
       return res.json({
         success: true,
-        message: 'Deleted Successfully',
+        message: `Vehicle with id ${id} successfully deleted`,
       });
     }
     return res.status(500).json({

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const userModel = require('../models/users');
 
 const getUsers = (req, res) => {
@@ -15,55 +16,47 @@ const getUser = (req, res) => {
       return res.json({
         success: true,
         message: `Detail user with id ${id}`,
-        results,
+        user: results[0],
       });
     }
     return res.status(404).json({
       success: false,
       message: `User with id ${id} not found`,
+      results,
     });
   });
 };
 
 const addUser = (req, res) => {
-  const newUser = {
-    name: req.body.name,
-    display_name: req.body.display_name,
-    email: req.body.email,
-    phone_number: req.body.phone_number,
-    address: req.body.address,
-    birthdate: req.body.birthdate,
-  };
-  userModel.addUser(newUser, (results) => {
-    if (results.affectedRows > 0) {
-      return res.json({
-        success: true,
-        message: 'Successfully added new user',
-        user: newUser,
+  const {
+    name, display_name, email, phone_number, address, birthdate,
+  } = req.body;
+  if (name && display_name && email && phone_number && address && birthdate) {
+    return userModel.addUser(req.body, () => {
+      userModel.getUsers((results) => {
+        const newUser = results.length - 1;
+        res.json({
+          success: true,
+          message: 'Successfully added new user',
+          user: results[newUser],
+        });
       });
-    }
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to adding new user',
     });
+  }
+  return res.status(500).json({
+    success: false,
+    message: 'Failed to add new user',
   });
 };
 
 const editUser = (req, res) => {
-  const userEdit = {
-    name: req.body.name,
-    display_name: req.body.display_name,
-    email: req.body.email,
-    phone_number: req.body.phone_number,
-    address: req.body.address,
-    birthdate: req.body.birthdate,
-  };
   const { id } = req.params;
-  userModel.editUser(userEdit, id, (results) => {
+  userModel.editUser(req.body, id, (results) => {
     if (results.affectedRows > 0) {
       return res.json({
         success: true,
-        message: 'User successfully updated',
+        message: 'Successfully updated user',
+        user: { id_user: id, ...req.body },
       });
     }
     return res.status(500).json({
