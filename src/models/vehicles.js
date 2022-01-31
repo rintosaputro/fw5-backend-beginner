@@ -1,7 +1,14 @@
 const db = require('../helpers/db');
 
-const getVehicles = (cb) => {
-  db.query('SELECT * FROM vehicles', (err, res) => {
+const countVehicle = (data, cb) => {
+  db.query(`SELECT COUNT(*) as total FROM vehicles WHERE brand LIKE '${data.search}%'`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
+const getVehicles = (data, cb) => {
+  db.query(`SELECT * FROM vehicles WHERE brand LIKE '${data.search}%' LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
@@ -36,6 +43,7 @@ const deleteVehicle = (id, cb) => {
 };
 
 module.exports = {
+  countVehicle,
   getVehicles,
   getVehicle,
   addVehicle,
