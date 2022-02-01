@@ -7,7 +7,7 @@ const vehicleModel = require('../models/vehicles');
 const helperGet = require('../helpers/get');
 
 const getVehicles = (req, res) => {
-  helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle);
+  helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
 };
 
 const getVehicle = (req, res) => {
@@ -36,7 +36,7 @@ const addVehicle = (req, res) => {
   };
 
   if (type && brand && capacity && location && price && qty) {
-    const regex = /\D/gi; // Mencari karakter selain angka
+    const regex = /\D/g; // Mencari karakter selain angka
     if (!regex.test(price) && !regex.test(qty)) {
       return vehicleModel.addVehicle(dataBody, () => {
         vehicleModel.newVehicle((results) => res.json({
@@ -53,7 +53,7 @@ const addVehicle = (req, res) => {
   }
   return res.status(400).json({
     success: false,
-    message: 'Failed to add new vehicle',
+    message: 'Failed to add new vehicle, data must be filled',
   });
 };
 

@@ -3,7 +3,7 @@ const userModel = require('../models/users');
 const helperGet = require('../helpers/get');
 
 const getUsers = (req, res) => {
-  helperGet(req, res, userModel.getUsers, userModel.countUsers);
+  helperGet(req, res, userModel.getUsers, userModel.countUsers, 'users');
 };
 
 const addUser = (req, res) => {
