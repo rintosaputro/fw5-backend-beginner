@@ -28,9 +28,25 @@ const addHistory = (data, cb) => {
   });
 };
 
+const getHistory = (id, cb) => {
+  db.query('SELECT * FROM history WHERE id_history=?', [id], (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
+const editHistory = (data, id, cb) => {
+  db.query('UPDATE history SET ? WHERE id_history=?;', [data, id], (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 module.exports = {
   countHistories,
   getHistories,
   newHistory,
   addHistory,
+  getHistory,
+  editHistory,
 };

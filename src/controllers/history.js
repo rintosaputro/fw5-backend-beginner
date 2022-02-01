@@ -65,7 +65,39 @@ const addHistory = (req, res) => {
   });
 };
 
+const editHistory = (req, res) => {
+  const { id } = req.params;
+  const {
+    type, name, rent_date, return_date, prepayment, returned,
+  } = req.body;
+  const data = {
+    type, name, rent_date, return_date, prepayment, returned,
+  };
+
+  const pola = /\D/g;
+  if (!pola.test(prepayment)) {
+    return historyModel.editHistory(data, id, (results) => {
+      if (results.changedRows > 0) {
+        return historyModel.getHistory(id, (rslt) => res.json({
+          success: true,
+          message: 'Edited successfully',
+          results: rslt,
+        }));
+      }
+      return res.status(400).json({
+        success: false,
+        message: `Failed to edit history with id ${id}`,
+      });
+    });
+  }
+  return res.status(400).json({
+    success: false,
+    message: 'Prepayment must be number',
+  });
+};
+
 module.exports = {
   getHistory,
   addHistory,
+  editHistory,
 };
