@@ -38,20 +38,28 @@ const getHistory = (req, res) => {
 
 const addHistory = (req, res) => {
   const {
-    type, name, rent_date, return_date, prepayment, returned,
+    type, name, rent_date, return_date, prepayment,
   } = req.body;
   const data = {
-    type, name, rent_date, return_date, prepayment, returned,
+    type, name, rent_date, return_date, prepayment,
   };
-  if (type && name && rent_date && return_date && prepayment && returned) {
+  if (type && name && rent_date && return_date && prepayment) {
     const pola = /\D/g;
     if (!pola.test(prepayment)) {
-      return historyModel.addHistory(data, () => {
-        historyModel.newHistory((results) => res.json({
-          success: true,
-          message: 'Successfully added new History',
-          results: results[0],
-        }));
+      return historyModel.checkHistory(data, (checkResult) => {
+        if (checkResult.length > 0) {
+          return res.status(400).json({
+            success: false,
+            message: 'Failed to add new history. Data already exists',
+          });
+        }
+        return historyModel.addHistory(data, () => {
+          historyModel.newHistory((results) => res.json({
+            success: true,
+            message: 'Successfully added new History',
+            results: results[0],
+          }));
+        });
       });
     }
     return res.status(400).json({

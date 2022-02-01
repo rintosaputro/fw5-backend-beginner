@@ -14,6 +14,14 @@ const getHistories = (data, cb) => {
   });
 };
 
+const checkHistory = (data, cb) => {
+  db.query(`SELECT * FROM history WHERE type='${data.type}' AND name='${data.name}' AND rent_date='${data.rent_date}' 
+  AND return_date='${data.return_date}' AND prepayment=${data.prepayment}`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 const newHistory = (cb) => {
   db.query('SELECT * FROM history ORDER BY id_history DESC LIMIT 1', (err, res) => {
     if (err) throw err;
@@ -52,6 +60,7 @@ const deleteHistory = (id, cb) => {
 module.exports = {
   countHistories,
   getHistories,
+  checkHistory,
   newHistory,
   addHistory,
   getHistory,
