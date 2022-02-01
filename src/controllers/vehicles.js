@@ -1,8 +1,5 @@
 /* eslint-disable prefer-const */
 /* eslint-disable camelcase */
-/* eslint-disable no-undef */
-/* eslint-disable radix */
-/* eslint-disable max-len */
 const vehicleModel = require('../models/vehicles');
 const helperGet = require('../helpers/get');
 
