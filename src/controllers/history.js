@@ -96,8 +96,29 @@ const editHistory = (req, res) => {
   });
 };
 
+const deleteHistory = (req, res) => {
+  const { id } = req.params;
+
+  historyModel.getHistory(id, (historyDeleted) => {
+    historyModel.deleteHistory(id, (results) => {
+      if (results.affectedRows > 0) {
+        return res.json({
+          success: true,
+          message: `History with id ${id} successfully deleted`,
+          results: historyDeleted[0],
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: `Failed to delete history with id ${id}`,
+      });
+    });
+  });
+};
+
 module.exports = {
   getHistory,
   addHistory,
   editHistory,
+  deleteHistory,
 };
