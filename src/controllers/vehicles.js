@@ -1,34 +1,13 @@
+/* eslint-disable prefer-const */
+/* eslint-disable camelcase */
+/* eslint-disable no-undef */
 /* eslint-disable radix */
 /* eslint-disable max-len */
 const vehicleModel = require('../models/vehicles');
+const helperVehicle = require('../helpers/vehicles');
 
 const getVehicles = (req, res) => {
-  let { search, page, limit } = req.query;
-  search = search || '';
-  page = parseInt(page) || 1;
-  limit = parseInt(limit) || 5;
-
-  const offset = (page - 1) * limit;
-  const data = { search, limit, offset };
-
-  vehicleModel.getVehicles(data, (results) => {
-    vehicleModel.countVehicle(data, (count) => {
-      const { total } = count[0];
-      const last = Math.ceil(total / limit);
-      return res.json({
-        success: true,
-        message: 'List Vehicles',
-        results,
-        pageInfo: {
-          prev: page > 1 ? `http://localhost:5000/vehicles?page=${page - 1}` : null,
-          next: page < last ? `http://localhost:5000/vehicles?page=${page + 1}` : null,
-          totalData: total,
-          currentPage: page,
-          lastPage: last,
-        },
-      });
-    });
-  });
+  helperVehicle(req, res, vehicleModel.getVehicles);
 };
 
 const getVehicle = (req, res) => {
@@ -52,19 +31,19 @@ const addVehicle = (req, res) => {
   const {
     type, brand, capacity, location, price, qty,
   } = req.body;
+  const dataBody = {
+    type, brand, capacity, location, price, qty,
+  };
 
   if (type && brand && capacity && location && price && qty) {
     const regex = /\D/gi; // Mencari karakter selain angka
     if (!regex.test(price) && !regex.test(qty)) {
-      return vehicleModel.addVehicle(req.body, () => {
-        vehicleModel.getVehicles((results) => {
-          const newVehicle = results.length - 1;
-          res.json({
-            success: true,
-            message: 'Successfully added new vehicle',
-            results: results[newVehicle],
-          });
-        });
+      return vehicleModel.addVehicle(dataBody, () => {
+        vehicleModel.newVehicle((results) => res.json({
+          success: true,
+          message: 'Successfully added new vehicle',
+          results: results[0],
+        }));
       });
     }
     return res.json({
@@ -80,7 +59,14 @@ const addVehicle = (req, res) => {
 
 const editVehicle = (req, res) => {
   const { id } = req.params;
-  vehicleModel.editVehicle(req.body, id, (results) => {
+  let {
+    type, brand, capacity, location, price, qty, rent_count,
+  } = req.body;
+  rent_count = rent_count || 0;
+  const dataBody = {
+    type, brand, capacity, location, price, qty, rent_count,
+  };
+  vehicleModel.editVehicle(dataBody, id, (results) => {
     if (results.changedRows > 0) {
       return vehicleModel.getVehicle(id, (vehicle) => res.json({
         success: true,

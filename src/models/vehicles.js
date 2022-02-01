@@ -21,6 +21,20 @@ const getVehicle = (id, cb) => {
   });
 };
 
+const getAll = (cb) => {
+  db.query('SELECT type, brand, capacity, location, price, qty FROM vehicles', (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
+const newVehicle = (cb) => {
+  db.query('SELECT * FROM vehicles ORDER BY id_vehicle DESC LIMIT 1', (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 const addVehicle = (data, cb) => {
   db.query('INSERT INTO vehicles SET ?', [data], (err) => {
     if (err) throw err;
@@ -46,6 +60,8 @@ module.exports = {
   countVehicle,
   getVehicles,
   getVehicle,
+  getAll,
+  newVehicle,
   addVehicle,
   editVehicle,
   deleteVehicle,
