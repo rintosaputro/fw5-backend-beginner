@@ -14,7 +14,23 @@ const getHistories = (data, cb) => {
   });
 };
 
+const newHistory = (cb) => {
+  db.query('SELECT * FROM history ORDER BY id_history DESC LIMIT 1', (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
+const addHistory = (data, cb) => {
+  db.query('INSERT INTO history SET ?', [data], (err) => {
+    if (err) throw err;
+    cb();
+  });
+};
+
 module.exports = {
   countHistories,
   getHistories,
+  newHistory,
+  addHistory,
 };

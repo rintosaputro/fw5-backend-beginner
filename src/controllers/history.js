@@ -36,6 +36,36 @@ const getHistory = (req, res) => {
   });
 };
 
+const addHistory = (req, res) => {
+  const {
+    type, name, rent_date, return_date, prepayment, returned,
+  } = req.body;
+  const data = {
+    type, name, rent_date, return_date, prepayment, returned,
+  };
+  if (type && name && rent_date && return_date && prepayment && returned) {
+    const pola = /\D/g;
+    if (!pola.test(prepayment)) {
+      return historyModel.addHistory(data, () => {
+        historyModel.newHistory((results) => res.json({
+          success: true,
+          message: 'Successfully added new History',
+          results: results[0],
+        }));
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      message: 'Prepayment must be number',
+    });
+  }
+  return res.status(400).json({
+    success: false,
+    message: 'Failed add new history, data must be filled',
+  });
+};
+
 module.exports = {
   getHistory,
+  addHistory,
 };

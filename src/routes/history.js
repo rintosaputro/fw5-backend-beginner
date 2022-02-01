@@ -4,11 +4,11 @@ const history = require('express').Router();
 //   getHistory, addHistory, editHistory, deleteHistory,
 // } = require('../controllers/history');
 const {
-  getHistory,
+  getHistory, addHistory,
 } = require('../controllers/history');
 
 history.get('/', getHistory);
-// history.post('/', addHistory);
+history.post('/', addHistory);
 // history.patch('/:id', editHistory);
 // history.delete('/:id', deleteHistory);
 
