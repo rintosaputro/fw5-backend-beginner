@@ -9,24 +9,6 @@ const getUsers = (req, res) => {
   }));
 };
 
-const getUser = (req, res) => {
-  const { id } = req.params;
-  userModel.getUser(id, (results) => {
-    if (results.length > 0) {
-      return res.json({
-        success: true,
-        message: `Detail user with id ${id}`,
-        user: results[0],
-      });
-    }
-    return res.status(404).json({
-      success: false,
-      message: `User with id ${id} not found`,
-      results,
-    });
-  });
-};
-
 const addUser = (req, res) => {
   const {
     name, display_name, email, phone_number, address, birthdate,
@@ -43,7 +25,7 @@ const addUser = (req, res) => {
       });
     });
   }
-  return res.status(500).json({
+  return res.status(400).json({
     success: false,
     message: 'Failed to add new user',
   });
@@ -59,7 +41,7 @@ const editUser = (req, res) => {
         user: { id_user: id, ...req.body },
       });
     }
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: 'Failed to update user',
     });
@@ -75,7 +57,7 @@ const deleteUser = (req, res) => {
         message: `User with id ${id} successfully deleted`,
       });
     }
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: `Failed to delete user with id ${id}`,
     });
@@ -84,7 +66,6 @@ const deleteUser = (req, res) => {
 
 module.exports = {
   getUsers,
-  getUser,
   addUser,
   editUser,
   deleteUser,

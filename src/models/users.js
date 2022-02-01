@@ -7,13 +7,6 @@ const getUsers = (cb) => {
   });
 };
 
-const getUser = (id, cb) => {
-  db.query('SELECT * FROM users WHERE id_user=?', [id], (err, res) => {
-    if (err) throw err;
-    cb(res);
-  });
-};
-
 const addUser = (data, cb) => {
   db.query('INSERT INTO users SET ?', [data], (err) => {
     if (err) throw err;
@@ -37,7 +30,6 @@ const deleteUser = (id, cb) => {
 
 module.exports = {
   getUsers,
-  getUser,
   addUser,
   editUser,
   deleteUser,
