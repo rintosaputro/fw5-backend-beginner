@@ -1,7 +1,6 @@
 /* eslint-disable radix */
-const vehicleModel = require('../models/vehicles');
 
-const getVehicles = (request, response, model) => {
+const get = (request, response, model, countModel) => {
   let { search, page, limit } = request.query;
   search = search || '';
   page = parseInt(page) || 1;
@@ -11,7 +10,7 @@ const getVehicles = (request, response, model) => {
   const data = { search, limit, offset };
 
   model(data, (results) => {
-    vehicleModel.countVehicle(data, (count) => {
+    countModel(data, (count) => {
       const { total } = count[0];
       const last = Math.ceil(total / limit);
       response.json({
@@ -30,4 +29,4 @@ const getVehicles = (request, response, model) => {
   });
 };
 
-module.exports = getVehicles;
+module.exports = get;

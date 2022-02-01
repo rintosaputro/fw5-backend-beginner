@@ -1,12 +1,9 @@
 /* eslint-disable camelcase */
 const userModel = require('../models/users');
+const helperGet = require('../helpers/get');
 
 const getUsers = (req, res) => {
-  userModel.getUsers((results) => res.json({
-    success: true,
-    message: 'List users',
-    results,
-  }));
+  helperGet(req, res, userModel.getUsers, userModel.countUsers);
 };
 
 const addUser = (req, res) => {
@@ -14,15 +11,26 @@ const addUser = (req, res) => {
     name, display_name, email, phone_number, address, birthdate,
   } = req.body;
   if (name && display_name && email && phone_number && address && birthdate) {
-    return userModel.addUser(req.body, () => {
-      userModel.getUsers((results) => {
-        const newUser = results.length - 1;
-        res.json({
-          success: true,
-          message: 'Successfully added new user',
-          user: results[newUser],
+    const polaNumber = /\D/g;
+    if (!polaNumber.test(phone_number)) {
+      const polaEmail = /@/g;
+      if (polaEmail.test(email)) {
+        return userModel.addUser(req.body, () => {
+          userModel.newUser((results) => res.json({
+            success: true,
+            message: 'Successfully added new user',
+            results: results[0],
+          }));
         });
+      }
+      return res.status(400).json({
+        success: false,
+        message: 'Wrong email input',
       });
+    }
+    return res.status(400).json({
+      success: false,
+      message: 'Phone number must be number',
     });
   }
   return res.status(400).json({
@@ -32,34 +40,57 @@ const addUser = (req, res) => {
 };
 
 const editUser = (req, res) => {
+  const {
+    name, display_name, email, phone_number, address, birthdate,
+  } = req.body;
+  const data = {
+    name, display_name, email, phone_number, address, birthdate,
+  };
   const { id } = req.params;
-  userModel.editUser(req.body, id, (results) => {
-    if (results.affectedRows > 0) {
-      return res.json({
-        success: true,
-        message: 'Successfully updated user',
-        user: { id_user: id, ...req.body },
+  const polaNumber = /\D/g;
+  if (!polaNumber.test(phone_number)) {
+    const polaEmail = /@/g;
+    if (polaEmail.test(email)) {
+      return userModel.editUser(data, id, (results) => {
+        if (results.affectedRows > 0) {
+          return userModel.getUser(id, (rslt) => res.json({
+            success: true,
+            message: 'Successfully updated user',
+            results: rslt[0],
+          }));
+        }
+        return res.status(400).json({
+          success: false,
+          message: 'Failed to update user',
+        });
       });
     }
     return res.status(400).json({
       success: false,
-      message: 'Failed to update user',
+      message: 'Wrong email input',
     });
+  }
+  return res.status(400).json({
+    success: false,
+    message: 'Phone number must be number',
   });
 };
 
 const deleteUser = (req, res) => {
   const { id } = req.params;
-  userModel.deleteUser(id, (results) => {
-    if (results.affectedRows > 0) {
-      return res.json({
-        success: true,
-        message: `User with id ${id} successfully deleted`,
+  userModel.getUser(id, (rslt) => {
+    userModel.deleteUser(id, (results) => {
+      if (results.affectedRows > 0) {
+        return res.json({
+          success: true,
+          message: `User with id ${id} successfully deleted`,
+          results: rslt[0],
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: `Failed to delete user with id ${id}`,
       });
-    }
-    return res.status(400).json({
-      success: false,
-      message: `Failed to delete user with id ${id}`,
     });
   });
 };

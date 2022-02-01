@@ -4,10 +4,10 @@
 /* eslint-disable radix */
 /* eslint-disable max-len */
 const vehicleModel = require('../models/vehicles');
-const helperVehicle = require('../helpers/vehicles');
+const helperGet = require('../helpers/get');
 
 const getVehicles = (req, res) => {
-  helperVehicle(req, res, vehicleModel.getVehicles);
+  helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle);
 };
 
 const getVehicle = (req, res) => {

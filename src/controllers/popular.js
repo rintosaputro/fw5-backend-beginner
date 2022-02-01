@@ -1,8 +1,9 @@
+const helperGet = require('../helpers/get');
 const populerModel = require('../models/popular');
-const helperVehicle = require('../helpers/vehicles');
+const model = require('../models/vehicles');
 
 const popular = (req, res) => {
-  helperVehicle(req, res, populerModel);
+  helperGet(req, res, populerModel, model.countVehicle);
 };
 
 module.exports = popular;
