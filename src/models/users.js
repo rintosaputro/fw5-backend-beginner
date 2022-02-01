@@ -21,6 +21,14 @@ const getUser = (id, cb) => {
   });
 };
 
+const checkUser = (data, cb) => {
+  db.query(`SELECT * FROM users WHERE name='${data.name}' AND display_name='${data.display_name}' AND email='${data.email}' 
+  AND phone_number='${data.phone_number}' AND address='${data.address}' AND birthdate='${data.birthdate}'`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 const newUser = (cb) => {
   db.query('SELECT * FROM users ORDER BY id_user DESC LIMIT 1', (err, res) => {
     if (err) throw err;
@@ -53,6 +61,7 @@ module.exports = {
   countUsers,
   getUsers,
   getUser,
+  checkUser,
   newUser,
   addUser,
   editUser,
