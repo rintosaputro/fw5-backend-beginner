@@ -38,12 +38,20 @@ const addVehicle = (req, res) => {
   if (type && brand && capacity && location && price && qty) {
     const regex = /\D/g; // Mencari karakter selain angka
     if (!regex.test(price) && !regex.test(qty)) {
-      return vehicleModel.addVehicle(dataBody, () => {
-        vehicleModel.newVehicle((results) => res.json({
-          success: true,
-          message: 'Successfully added new vehicle',
-          results: results[0],
-        }));
+      return vehicleModel.checkVehicle(dataBody, (checkResult) => {
+        if (checkResult.length > 0) {
+          return res.status(400).json({
+            success: false,
+            message: 'Failed to add new vehicle. Data already exists',
+          });
+        }
+        return vehicleModel.addVehicle(dataBody, () => {
+          vehicleModel.newVehicle((results) => res.json({
+            success: true,
+            message: 'Successfully added new vehicle',
+            results: results[0],
+          }));
+        });
       });
     }
     return res.status(400).json({

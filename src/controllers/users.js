@@ -52,7 +52,7 @@ const editUser = (req, res) => {
     const polaEmail = /@/g;
     if (polaEmail.test(email)) {
       return userModel.editUser(data, id, (results) => {
-        if (results.affectedRows > 0) {
+        if (results.changedRows > 0) {
           return userModel.getUser(id, (rslt) => res.json({
             success: true,
             message: 'Successfully updated user',

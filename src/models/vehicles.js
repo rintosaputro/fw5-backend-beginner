@@ -28,6 +28,14 @@ const getAll = (cb) => {
   });
 };
 
+const checkVehicle = (data, cb) => {
+  db.query(`SELECT * FROM vehicles WHERE type='${data.type}' AND brand='${data.brand}' AND capacity='${data.capacity}' 
+  AND location='${data.location}' AND price=${data.price} AND qty=${data.qty}`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 const newVehicle = (cb) => {
   db.query('SELECT * FROM vehicles ORDER BY id_vehicle DESC LIMIT 1', (err, res) => {
     if (err) throw err;
@@ -61,6 +69,7 @@ module.exports = {
   getVehicles,
   getVehicle,
   getAll,
+  checkVehicle,
   newVehicle,
   addVehicle,
   editVehicle,
