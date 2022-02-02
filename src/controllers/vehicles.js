@@ -64,10 +64,9 @@ const addVehicle = (req, res) => {
 
 const editVehicle = (req, res) => {
   const { id } = req.params;
-  let {
+  const {
     type, brand, capacity, location, price, qty, rent_count,
   } = req.body;
-  rent_count = rent_count || 0;
   const dataBody = {
     type, brand, capacity, location, price, qty, rent_count,
   };

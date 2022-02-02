@@ -1,14 +1,8 @@
 const db = require('../helpers/db');
 
-const countHistories = (data, cb) => {
-  db.query(`SELECT COUNT(*) as total FROM history WHERE name LIKE '${data.name}%'`, (err, res) => {
-    if (err) throw err;
-    cb(res);
-  });
-};
-
-const getHistories = (data, cb) => {
-  db.query(`SELECT * FROM history WHERE name LIKE '${data.name}%' OR type LIKE '${data.type}' LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
+const getHistories = (cb) => {
+  db.query(`SELECT id_history, u.name as user_name, v.brand as brand, rent_start_date, rent_end_date, prepayment 
+  FROM history h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle;`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
@@ -58,7 +52,6 @@ const deleteHistory = (id, cb) => {
 };
 
 module.exports = {
-  countHistories,
   getHistories,
   checkHistory,
   newHistory,

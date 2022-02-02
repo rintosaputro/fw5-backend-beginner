@@ -1,10 +1,10 @@
 const history = require('express').Router();
 
 const {
-  getHistory, addHistory, editHistory, deleteHistory,
+  getHistories, addHistory, editHistory, deleteHistory,
 } = require('../controllers/history');
 
-history.get('/', getHistory);
+history.get('/', getHistories);
 history.post('/', addHistory);
 history.patch('/:id', editHistory);
 history.delete('/:id', deleteHistory);
