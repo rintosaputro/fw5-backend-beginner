@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable radix */
-const historyModel = require('../models/history');
+const historyModel = require('../models/histories');
 
 const getHistories = (req, res) => {
   historyModel.getHistories((results) => res.json({

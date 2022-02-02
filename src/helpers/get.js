@@ -10,21 +10,27 @@ const get = (request, response, model, countModel, table) => {
   const data = { search, limit, offset };
 
   model(data, (results) => {
-    countModel(data, (count) => {
-      const { total } = count[0];
-      const last = Math.ceil(total / limit);
-      response.json({
-        success: true,
-        message: `List ${table}`,
-        results,
-        pageInfo: {
-          prev: page > 1 ? `http://localhost:5000/${table}?page=${page - 1}` : null,
-          next: page < last ? `http://localhost:5000/${table}?page=${page + 1}` : null,
-          totalData: total,
-          currentPage: page,
-          lastPage: last,
-        },
+    if (results.length > 0) {
+      return countModel(data, (count) => {
+        const { total } = count[0];
+        const last = Math.ceil(total / limit);
+        response.json({
+          success: true,
+          message: `List ${table}`,
+          results,
+          pageInfo: {
+            prev: page > 1 ? `http://localhost:5000/${table}?page=${page - 1}` : null,
+            next: page < last ? `http://localhost:5000/${table}?page=${page + 1}` : null,
+            totalData: total,
+            currentPage: page,
+            lastPage: last,
+          },
+        });
       });
+    }
+    return response.status(404).json({
+      success: false,
+      message: 'Data not found',
     });
   });
 };

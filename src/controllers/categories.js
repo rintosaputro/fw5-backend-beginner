@@ -34,7 +34,7 @@ const addCategory = (req, res) => {
 const editCategory = (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
-  if (id && name) {
+  if (name) {
     return categoryModel.checkCategories(name, (checkResults) => {
       if (checkResults.length === 0) {
         return categoryModel.editCategory(name, id, (results) => {
@@ -48,9 +48,9 @@ const editCategory = (req, res) => {
               },
             });
           }
-          return res.status(404).json({
+          return res.status(400).json({
             success: false,
-            message: `Failed to edit category with id ${id}, data doesn't change`,
+            message: `Failed to edit category with id ${id}`,
           });
         });
       }
@@ -62,7 +62,7 @@ const editCategory = (req, res) => {
   }
   return res.status(400).json({
     success: false,
-    message: 'id and name must be filled',
+    message: 'name must be filled',
   });
 };
 

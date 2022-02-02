@@ -1,14 +1,16 @@
+/* eslint-disable max-len */
 const db = require('../helpers/db');
 
 const countCategory = (data, cb) => {
-  db.query(`SELECT COUNT(*) as total FROM categories WHERE name LIKE '${data.search}%'`, (err, res) => {
+  db.query(`SELECT COUNT(*) AS total FROM categories c LEFT JOIN vehicles v ON c.id_category=v.id_category WHERE name LIKE '${data.search}%';`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
 };
 
 const getCategories = (data, cb) => {
-  db.query(`SELECT * FROM categories WHERE name LIKE '${data.search}%' LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
+  db.query(`SELECT c.id_category, name, brand, capacity, location, price, qty, rent_count, c.createdAt, c.updatedAt FROM categories c 
+  LEFT JOIN vehicles v ON c.id_category=v.id_category WHERE name LIKE '${data.search}%' LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
