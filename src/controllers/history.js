@@ -50,10 +50,10 @@ const addHistory = (req, res) => {
 const editHistory = (req, res) => {
   const { id } = req.params;
   const {
-    type, name, rent_date, return_date, prepayment, returned,
+    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, returned,
   } = req.body;
   const data = {
-    type, name, rent_date, return_date, prepayment, returned,
+    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, returned,
   };
 
   const pola = /\D/g;
