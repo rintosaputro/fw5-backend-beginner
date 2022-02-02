@@ -1,7 +1,7 @@
 const db = require('../helpers/db');
 
 const getHistories = (cb) => {
-  db.query(`SELECT id_history, u.name as user_name, v.brand as brand, rent_start_date, rent_end_date, prepayment 
+  db.query(`SELECT id_history, h.id_user, u.name as user_name, h.id_vehicle, v.brand as brand, rent_start_date, rent_end_date, prepayment, h.createdAt, h.updatedAt 
   FROM history h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle;`, (err, res) => {
     if (err) throw err;
     cb(res);
