@@ -15,7 +15,7 @@ const getCategories = (data, cb) => {
 };
 
 const checkCategories = (data, cb) => {
-  db.query(`SELECT name FROM categories WHERE name='${data.name}'`, (err, res) => {
+  db.query(`SELECT * FROM categories WHERE name='${data}'`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
@@ -35,10 +35,18 @@ const addCategory = (data, cb) => {
   });
 };
 
+const editCategory = (data, id, cb) => {
+  db.query('UPDATE categories SET name=?  WHERE id_category=?;', [data, id], (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 module.exports = {
   countCategory,
   getCategories,
   checkCategories,
   newCategory,
   addCategory,
+  editCategory,
 };
