@@ -66,8 +66,28 @@ const editCategory = (req, res) => {
   });
 };
 
+const deleteCategory = (req, res) => {
+  const { id } = req.params;
+  categoryModel.getCategory(id, (categoryDeleted) => {
+    categoryModel.deleteCategory(id, (results) => {
+      if (results.affectedRows > 0) {
+        return res.json({
+          success: true,
+          message: `Vehicle with id ${id} successfully deleted`,
+          results: categoryDeleted[0],
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: `Failed to delete category with id ${id}`,
+      });
+    });
+  });
+};
+
 module.exports = {
   getCategories,
   addCategory,
   editCategory,
+  deleteCategory,
 };

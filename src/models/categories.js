@@ -42,6 +42,20 @@ const editCategory = (data, id, cb) => {
   });
 };
 
+const getCategory = (id, cb) => {
+  db.query('SELECT * from categories WHERE id_category=?', [id], (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
+const deleteCategory = (id, cb) => {
+  db.query('DELETE FROM categories WHERE id_category=?', [id], (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 module.exports = {
   countCategory,
   getCategories,
@@ -49,4 +63,6 @@ module.exports = {
   newCategory,
   addCategory,
   editCategory,
+  getCategory,
+  deleteCategory,
 };
