@@ -21,13 +21,6 @@ const getVehicle = (id, cb) => {
   });
 };
 
-const getAll = (cb) => {
-  db.query('SELECT type, brand, capacity, location, price, qty FROM vehicles', (err, res) => {
-    if (err) throw err;
-    cb(res);
-  });
-};
-
 const checkVehicle = (data, cb) => {
   db.query(`SELECT * FROM vehicles WHERE type='${data.type}' AND brand='${data.brand}' AND capacity='${data.capacity}' 
   AND location='${data.location}' AND price=${data.price} AND qty=${data.qty}`, (err, res) => {
@@ -68,7 +61,6 @@ module.exports = {
   countVehicle,
   getVehicles,
   getVehicle,
-  getAll,
   checkVehicle,
   newVehicle,
   addVehicle,
