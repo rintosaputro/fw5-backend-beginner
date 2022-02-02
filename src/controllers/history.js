@@ -12,12 +12,12 @@ const getHistories = (req, res) => {
 
 const addHistory = (req, res) => {
   const {
-    type, name, rent_date, return_date, prepayment,
+    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment,
   } = req.body;
   const data = {
-    type, name, rent_date, return_date, prepayment,
+    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment,
   };
-  if (type && name && rent_date && return_date && prepayment) {
+  if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
     const pola = /\D/g;
     if (!pola.test(prepayment)) {
       return historyModel.checkHistory(data, (checkResult) => {

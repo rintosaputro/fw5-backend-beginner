@@ -9,8 +9,8 @@ const getHistories = (cb) => {
 };
 
 const checkHistory = (data, cb) => {
-  db.query(`SELECT * FROM history WHERE type='${data.type}' AND name='${data.name}' AND rent_date='${data.rent_date}' 
-  AND return_date='${data.return_date}' AND prepayment=${data.prepayment}`, (err, res) => {
+  db.query(`SELECT * FROM history WHERE id_user=${data.id_user} AND id_vehicle=${data.id_vehicle} AND rent_start_date='${data.rent_start_date}' 
+  AND rent_end_date='${data.rent_end_date}' AND prepayment=${data.prepayment}`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
