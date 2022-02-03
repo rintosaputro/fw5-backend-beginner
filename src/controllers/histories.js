@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable radix */
 const historyModel = require('../models/histories');
+const vehicleModel = require('../models/vehicles');
 
 const getHistories = (req, res) => {
   historyModel.getHistories((results) => res.json({
@@ -28,6 +29,7 @@ const addHistory = (req, res) => {
           });
         }
         return historyModel.addHistory(data, () => {
+          vehicleModel.addRentCount(id_vehicle);
           historyModel.newHistory((results) => res.json({
             success: true,
             message: 'Successfully added new History',

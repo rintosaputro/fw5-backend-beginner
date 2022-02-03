@@ -57,6 +57,10 @@ const deleteVehicle = (id, cb) => {
   });
 };
 
+const addRentCount = (id) => {
+  db.query(`UPDATE vehicles SET rent_count=rent_count+1 WHERE id_vehicle=${id};`);
+};
+
 module.exports = {
   countVehicle,
   getVehicles,
@@ -66,4 +70,5 @@ module.exports = {
   addVehicle,
   editVehicle,
   deleteVehicle,
+  addRentCount,
 };
