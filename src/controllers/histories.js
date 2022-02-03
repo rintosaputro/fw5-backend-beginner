@@ -2,13 +2,10 @@
 /* eslint-disable radix */
 const historyModel = require('../models/histories');
 const vehicleModel = require('../models/vehicles');
+const helperGet = require('../helpers/get');
 
 const getHistories = (req, res) => {
-  historyModel.getHistories((results) => res.json({
-    success: true,
-    message: 'List histories',
-    results,
-  }));
+  helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
 };
 
 const addHistory = (req, res) => {

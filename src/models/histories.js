@@ -1,15 +1,17 @@
 const db = require('../helpers/db');
 
 const countHistory = (data, cb) => {
-  db.query(`SELECT COUNT(*) AS total FROM histories h LEFT JOIN vehicles v ON c.id_category=v.id_category WHERE name LIKE '${data.search}%';`, (err, res) => {
+  db.query(`SELECT COUNT(*) AS total FROM histories h LEFT JOIN vehicles v ON h.id_vehicle =v.id_vehicle 
+  LEFT JOIN users u ON h.id_user = u.id_user`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
 };
 
-const getHistories = (cb) => {
+const getHistories = (data, cb) => {
   db.query(`SELECT id_history, h.id_user, u.name as user_name, h.id_vehicle, v.brand as brand, rent_start_date, rent_end_date, prepayment, h.createdAt, h.updatedAt 
-  FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle;`, (err, res) => {
+  FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle 
+  LIMIT ${data.limit} OFFSET ${data.offset};`, (err, res) => {
     if (err) throw err;
     cb(res);
   });

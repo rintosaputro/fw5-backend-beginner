@@ -7,6 +7,23 @@ const getVehicles = (req, res) => {
   helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
 };
 
+const getVehicleCategory = (req, res) => {
+  const { category } = req.query;
+  vehicleModel.getVehicleCategory(category, (results) => {
+    if (results.length > 0) {
+      return res.json({
+        success: true,
+        message: 'Vehicles by category',
+        results,
+      });
+    }
+    return res.status(404).json({
+      success: false,
+      message: `Vehicle with category ${category} not found`,
+    });
+  });
+};
+
 const getVehicle = (req, res) => {
   const { id } = req.params;
   vehicleModel.getVehicle(id, (results) => {
@@ -106,6 +123,7 @@ const deleteVehicle = (req, res) => {
 
 module.exports = {
   getVehicles,
+  getVehicleCategory,
   getVehicle,
   addVehicle,
   editVehicle,

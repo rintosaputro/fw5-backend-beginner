@@ -14,6 +14,13 @@ const getVehicles = (data, cb) => {
   });
 };
 
+const getVehicleCategory = (data, cb) => {
+  db.query(`SELECT v.* FROM vehicles v LEFT JOIN categories c ON v.id_category = c.id_category WHERE c.name LIKE '${data}%';`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 const getVehicle = (id, cb) => {
   db.query('SELECT * FROM vehicles WHERE id_vehicle=?', [id], (err, res) => {
     if (err) throw err;
@@ -64,6 +71,7 @@ const addRentCount = (id) => {
 module.exports = {
   countVehicle,
   getVehicles,
+  getVehicleCategory,
   getVehicle,
   checkVehicle,
   newVehicle,
