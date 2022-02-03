@@ -8,6 +8,23 @@ const getHistories = (req, res) => {
   helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
 };
 
+const getHistory = (req, res) => {
+  const { id } = req.params;
+  historyModel.getHistory(id, (results) => {
+    if (results.length > 0) {
+      return res.json({
+        success: true,
+        message: `History with id ${id}`,
+        results: results[0],
+      });
+    }
+    return res.status(404).json({
+      success: false,
+      message: 'History not found',
+    });
+  });
+};
+
 const addHistory = (req, res) => {
   const {
     id_user, id_vehicle, rent_start_date, rent_end_date, prepayment,
@@ -18,21 +35,13 @@ const addHistory = (req, res) => {
   if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
     const pola = /\D/g;
     if (!pola.test(prepayment)) {
-      return historyModel.checkHistory(data, (checkResult) => {
-        if (checkResult.length > 0) {
-          return res.status(400).json({
-            success: false,
-            message: 'Failed to add new history. Data already exists',
-          });
-        }
-        return historyModel.addHistory(data, () => {
-          vehicleModel.addRentCount(id_vehicle);
-          historyModel.newHistory((results) => res.json({
-            success: true,
-            message: 'Successfully added new History',
-            results: results[0],
-          }));
-        });
+      return historyModel.addHistory(data, () => {
+        vehicleModel.addRentCount(id_vehicle);
+        historyModel.newHistory((results) => res.json({
+          success: true,
+          message: 'Successfully added new History',
+          results: results[0],
+        }));
       });
     }
     return res.status(400).json({
@@ -99,6 +108,7 @@ const deleteHistory = (req, res) => {
 
 module.exports = {
   getHistories,
+  getHistory,
   addHistory,
   editHistory,
   deleteHistory,
