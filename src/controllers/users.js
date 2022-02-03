@@ -8,45 +8,51 @@ const getUsers = (req, res) => {
 
 const addUser = (req, res) => {
   const {
-    name, display_name, email, phone_number, address, birthdate,
+    name, display_name, gender, email, phone_number, address, birthdate,
   } = req.body;
   const data = {
-    name, display_name, email, phone_number, address, birthdate,
+    name, display_name, gender, email, phone_number, address, birthdate,
   };
-  if (name && display_name && email && phone_number && address && birthdate) {
-    const polaNumber = /\D/g;
-    if (!polaNumber.test(phone_number)) {
-      const polaEmail = /@/g;
-      if (polaEmail.test(email)) {
-        return userModel.checkUser(data, (checkResult) => {
-          if (checkResult.length > 0) {
-            return res.status(400).json({
-              success: false,
-              message: 'Failed to add new user. Data already exists',
+  if (gender.toLowerCase() === 'male' || gender.toLowerCase() === 'female') {
+    if (name && display_name && email && phone_number && address && birthdate) {
+      const polaNumber = /\D/g;
+      if (!polaNumber.test(phone_number)) {
+        const polaEmail = /@/g;
+        if (polaEmail.test(email)) {
+          return userModel.checkUser(data, (checkResult) => {
+            if (checkResult.length > 0) {
+              return res.status(400).json({
+                success: false,
+                message: 'Failed to add new user. Data already exists',
+              });
+            }
+            return userModel.addUser(data, () => {
+              userModel.newUser((results) => res.json({
+                success: true,
+                message: 'Successfully added new user',
+                results: results[0],
+              }));
             });
-          }
-          return userModel.addUser(data, () => {
-            userModel.newUser((results) => res.json({
-              success: true,
-              message: 'Successfully added new user',
-              results: results[0],
-            }));
           });
+        }
+        return res.status(400).json({
+          success: false,
+          message: 'Wrong email input',
         });
       }
       return res.status(400).json({
         success: false,
-        message: 'Wrong email input',
+        message: 'Phone number must be number',
       });
     }
     return res.status(400).json({
       success: false,
-      message: 'Phone number must be number',
+      message: 'Failed to add new user, data must be filled',
     });
   }
   return res.status(400).json({
     success: false,
-    message: 'Failed to add new user',
+    message: 'Gender unknown',
   });
 };
 
@@ -72,7 +78,7 @@ const editUser = (req, res) => {
         }
         return res.status(400).json({
           success: false,
-          message: 'Failed to update user',
+          message: 'Failed to update user. Data hasnt changed or data is empty',
         });
       });
     }

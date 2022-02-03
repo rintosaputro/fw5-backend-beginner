@@ -1,7 +1,8 @@
 const db = require('../helpers/db');
 
 const countHistory = (data, cb) => {
-  db.query(`SELECT COUNT(*) AS total FROM histories h LEFT JOIN vehicles v ON h.id_vehicle =v.id_vehicle 
+  db.query(`SELECT COUNT(*) AS total FROM histories h 
+  LEFT JOIN vehicles v ON h.id_vehicle =v.id_vehicle 
   LEFT JOIN users u ON h.id_user = u.id_user`, (err, res) => {
     if (err) throw err;
     cb(res);
@@ -9,7 +10,7 @@ const countHistory = (data, cb) => {
 };
 
 const getHistories = (data, cb) => {
-  db.query(`SELECT id_history, h.id_user, u.name as user_name, h.id_vehicle, v.brand as brand, rent_start_date, rent_end_date, prepayment, h.createdAt, h.updatedAt 
+  db.query(`SELECT id_history, u.name as user_name, v.brand as brand, rent_start_date, rent_end_date, prepayment, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle 
   LIMIT ${data.limit} OFFSET ${data.offset};`, (err, res) => {
     if (err) throw err;

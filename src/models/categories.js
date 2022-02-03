@@ -2,15 +2,19 @@
 const db = require('../helpers/db');
 
 const countCategory = (data, cb) => {
-  db.query(`SELECT COUNT(*) AS total FROM categories c LEFT JOIN vehicles v ON c.id_category=v.id_category WHERE name LIKE '${data.search}%';`, (err, res) => {
+  db.query(`SELECT COUNT(*) AS total FROM categories c 
+  LEFT JOIN vehicles v ON c.id_category=v.id_category 
+  WHERE name LIKE '${data.search}%';`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
 };
 
 const getCategories = (data, cb) => {
-  db.query(`SELECT c.id_category, name, brand, capacity, location, price, qty, rent_count, c.createdAt, c.updatedAt FROM categories c 
-  LEFT JOIN vehicles v ON c.id_category=v.id_category WHERE name LIKE '${data.search}%' LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
+  db.query(`SELECT c.id_category, c.name, v.brand, v.capacity, v.location, v.price, v.qty, v.rent_count, c.createdAt, c.updatedAt FROM categories c 
+  LEFT JOIN vehicles v ON c.id_category=v.id_category 
+  WHERE c.name LIKE '${data.search}%'
+  LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
