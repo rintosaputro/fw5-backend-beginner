@@ -6,12 +6,29 @@ const getCategories = (req, res) => {
   getHelper(req, res, categoryModel.getCategories, categoryModel.countCategory, 'categories');
 };
 
+const getCategory = (req, res) => {
+  const { id } = req.params;
+  categoryModel.getCategory(id, (results) => {
+    if (results.length > 0) {
+      return res.json({
+        success: true,
+        message: `Data ategory with id ${id}`,
+        results: results[0],
+      });
+    }
+    return res.status(404).json({
+      success: false,
+      message: `Category not found with id ${id}`,
+    });
+  });
+};
+
 const addCategory = (req, res) => {
-  const { name } = req.body;
-  if (name) {
-    return categoryModel.checkCategories(name, (checkResults) => {
+  const { type } = req.body;
+  if (type) {
+    return categoryModel.checkCategories(type, (checkResults) => {
       if (checkResults.length === 0) {
-        return categoryModel.addCategory(name, () => {
+        return categoryModel.addCategory(type, () => {
           categoryModel.newCategory((results) => res.json({
             success: true,
             message: 'Successfully added new category',
@@ -33,18 +50,18 @@ const addCategory = (req, res) => {
 
 const editCategory = (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
-  if (name) {
-    return categoryModel.checkCategories(name, (checkResults) => {
+  const { type } = req.body;
+  if (type) {
+    return categoryModel.checkCategories(type, (checkResults) => {
       if (checkResults.length === 0) {
-        return categoryModel.editCategory(name, id, (results) => {
+        return categoryModel.editCategory(type, id, (results) => {
           if (results.changedRows > 0) {
             return res.json({
               success: true,
               message: 'Edited successfully',
               results: {
                 id_category: parseInt(id),
-                name,
+                type,
               },
             });
           }
@@ -56,18 +73,19 @@ const editCategory = (req, res) => {
       }
       return res.status(400).json({
         success: false,
-        message: 'Failed to edit category. Name already exists',
+        message: `Failed to edit category. Type ${type} already exists`,
       });
     });
   }
   return res.status(400).json({
     success: false,
-    message: 'name must be filled',
+    message: 'Type must be filled',
   });
 };
 
 const deleteCategory = (req, res) => {
-  const { id } = req.params;
+  let { id } = req.params;
+  id = id || 0;
   categoryModel.getCategory(id, (categoryDeleted) => {
     categoryModel.deleteCategory(id, (results) => {
       if (results.affectedRows > 0) {
@@ -79,7 +97,7 @@ const deleteCategory = (req, res) => {
       }
       return res.status(400).json({
         success: false,
-        message: `Failed to delete category with id ${id}`,
+        message: `Failed to delete, category with id ${id} not found`,
       });
     });
   });
@@ -87,6 +105,7 @@ const deleteCategory = (req, res) => {
 
 module.exports = {
   getCategories,
+  getCategory,
   addCategory,
   editCategory,
   deleteCategory,
