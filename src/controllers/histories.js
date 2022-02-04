@@ -3,6 +3,7 @@
 const historyModel = require('../models/histories');
 const vehicleModel = require('../models/vehicles');
 const helperGet = require('../helpers/get');
+const checkDate = require('../helpers/checkDate');
 
 const getHistories = (req, res) => {
   helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
@@ -34,20 +35,26 @@ const addHistory = (req, res) => {
     id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
   };
   if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
-    const pola = /\D/g;
-    if (!pola.test(prepayment)) {
-      return historyModel.addHistory(data, () => {
-        vehicleModel.addRentCount(id_vehicle);
-        historyModel.newHistory((results) => res.json({
-          success: true,
-          message: 'Successfully added new History',
-          results: results[0],
-        }));
+    if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
+      const pola = /\D/g;
+      if (!pola.test(prepayment)) {
+        return historyModel.addHistory(data, () => {
+          vehicleModel.addRentCount(id_vehicle);
+          historyModel.newHistory((results) => res.json({
+            success: true,
+            message: 'Successfully added new History',
+            results: results[0],
+          }));
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: 'Prepayment must be number',
       });
     }
     return res.status(400).json({
       success: false,
-      message: 'Prepayment must be number',
+      message: 'Wrong date input for rent_start_date and rent_end_date. Format date YYYY-MM-DD',
     });
   }
   return res.status(400).json({
@@ -59,26 +66,32 @@ const addHistory = (req, res) => {
 const editHistory = (req, res) => {
   const { id } = req.params;
   const {
-    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, returned,
+    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
   } = req.body;
   const data = {
-    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, returned,
+    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
   };
 
   const pola = /\D/g;
   if (!pola.test(prepayment)) {
-    return historyModel.editHistory(data, id, (results) => {
-      if (results.changedRows > 0) {
-        return historyModel.getHistory(id, (rslt) => res.json({
-          success: true,
-          message: 'Edited successfully',
-          results: rslt,
-        }));
-      }
-      return res.status(400).json({
-        success: false,
-        message: `Failed to edit history with id ${id}. Data hasnt changed or data is empty`,
+    if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
+      return historyModel.editHistory(data, id, (results) => {
+        if (results.changedRows > 0) {
+          return historyModel.getHistory(id, (rslt) => res.json({
+            success: true,
+            message: 'Edited successfully',
+            results: rslt,
+          }));
+        }
+        return res.status(400).json({
+          success: false,
+          message: `Failed to edit history with id ${id}. Data has not changed or some data is empty`,
+        });
       });
+    }
+    return res.status(400).json({
+      success: false,
+      message: 'Wrong date input for rent_start_date and rent_end_date. Format date YYYY-MM-DD',
     });
   }
   return res.status(400).json({
