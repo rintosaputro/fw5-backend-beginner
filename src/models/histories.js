@@ -61,9 +61,9 @@ const deleteHistory = (id, cb) => {
 module.exports = {
   countHistory,
   getHistories,
+  getHistory,
   newHistory,
   addHistory,
-  getHistory,
   editHistory,
   deleteHistory,
 };
