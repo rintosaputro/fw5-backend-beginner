@@ -84,8 +84,7 @@ const editCategory = (req, res) => {
 };
 
 const deleteCategory = (req, res) => {
-  let { id } = req.params;
-  id = id || 0;
+  const { id } = req.params;
   categoryModel.getCategory(id, (categoryDeleted) => {
     categoryModel.deleteCategory(id, (results) => {
       if (results.affectedRows > 0) {

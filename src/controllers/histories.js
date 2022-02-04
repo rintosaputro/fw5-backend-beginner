@@ -29,8 +29,9 @@ const addHistory = (req, res) => {
   const {
     id_user, id_vehicle, rent_start_date, rent_end_date, prepayment,
   } = req.body;
+  const status = 'not been returned';
   const data = {
-    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment,
+    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
   };
   if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
     const pola = /\D/g;
@@ -88,7 +89,6 @@ const editHistory = (req, res) => {
 
 const deleteHistory = (req, res) => {
   const { id } = req.params;
-
   historyModel.getHistory(id, (historyDeleted) => {
     historyModel.deleteHistory(id, (results) => {
       if (results.affectedRows > 0) {
