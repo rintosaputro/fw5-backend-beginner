@@ -52,28 +52,36 @@ const editCategory = (req, res) => {
   const { id } = req.params;
   const { type } = req.body;
   if (type) {
-    return categoryModel.checkCategories(type, (checkResults) => {
-      if (checkResults.length === 0) {
-        return categoryModel.editCategory(type, id, (results) => {
-          if (results.changedRows > 0) {
-            return res.json({
-              success: true,
-              message: 'Edited successfully',
-              results: {
-                id_category: parseInt(id),
-                type,
-              },
+    return categoryModel.getCategory(id, (resId) => {
+      if (resId.length > 0) {
+        return categoryModel.checkCategories(type, (checkResults) => {
+          if (checkResults.length === 0) {
+            return categoryModel.editCategory(type, id, (results) => {
+              if (results.changedRows > 0) {
+                return res.json({
+                  success: true,
+                  message: 'Edited successfully',
+                  results: {
+                    id_category: parseInt(id),
+                    type,
+                  },
+                });
+              }
+              return res.status(400).json({
+                success: false,
+                message: `Failed to edit category with id ${id}. Data hasnt changed or data is empty`,
+              });
             });
           }
           return res.status(400).json({
             success: false,
-            message: `Failed to edit category with id ${id}. Data hasnt changed or data is empty`,
+            message: `Failed to edit category. Type ${type} already exists`,
           });
         });
       }
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
-        message: `Failed to edit category. Type ${type} already exists`,
+        message: `Failed to edit category. Category with id ${id} not found`,
       });
     });
   }
@@ -94,7 +102,7 @@ const deleteCategory = (req, res) => {
           results: categoryDeleted[0],
         });
       }
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         message: `Failed to delete, category with id ${id} not found`,
       });
