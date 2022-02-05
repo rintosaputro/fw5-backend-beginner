@@ -7,7 +7,7 @@ const getCategories = (req, res) => {
 };
 
 const getCategoriesData = (req, res) => {
-  getHelper(req, res, categoryModel.getCategoriesData, categoryModel.countCategory, 'categories');
+  getHelper(req, res, categoryModel.getCategoriesData, categoryModel.countCategoryData, 'categories');
 };
 
 const getCategory = (req, res) => {

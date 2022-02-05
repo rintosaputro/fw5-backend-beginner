@@ -2,9 +2,8 @@
 const db = require('../helpers/db');
 
 const countCategory = (data, cb) => {
-  db.query(`SELECT COUNT(*) AS total FROM categories c 
-  LEFT JOIN vehicles v ON c.id_category=v.id_category 
-  WHERE c.type LIKE '${data.search}%';`, (err, res) => {
+  db.query(`SELECT COUNT(*) AS total FROM categories
+  WHERE type LIKE '${data.search}%';`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
@@ -14,6 +13,15 @@ const getCategories = (data, cb) => {
   db.query(`SELECT * FROM categories 
     WHERE type LIKE '${data.search}%'
     LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
+const countCategoryData = (data, cb) => {
+  db.query(`SELECT COUNT(*) AS total FROM categories c 
+  LEFT JOIN vehicles v ON c.id_category=v.id_category 
+  WHERE c.type LIKE '${data.search}%';`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
@@ -74,6 +82,7 @@ const deleteCategory = (id, cb) => {
 module.exports = {
   countCategory,
   getCategories,
+  countCategoryData,
   getCategoriesData,
   checkCategories,
   newCategory,
