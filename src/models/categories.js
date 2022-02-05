@@ -11,6 +11,15 @@ const countCategory = (data, cb) => {
 };
 
 const getCategories = (data, cb) => {
+  db.query(`SELECT * FROM categories 
+    WHERE type LIKE '${data.search}%'
+    LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
+const getCategoriesData = (data, cb) => {
   db.query(`SELECT c.id_category, c.type, v.brand, v.capacity, v.location, v.price, v.qty, v.rent_count, c.createdAt, c.updatedAt FROM categories c 
   LEFT JOIN vehicles v ON c.id_category=v.id_category 
   WHERE c.type LIKE '${data.search}%'
@@ -65,6 +74,7 @@ const deleteCategory = (id, cb) => {
 module.exports = {
   countCategory,
   getCategories,
+  getCategoriesData,
   checkCategories,
   newCategory,
   addCategory,
