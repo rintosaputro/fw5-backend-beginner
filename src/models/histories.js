@@ -4,7 +4,7 @@ const countHistory = (data, cb) => {
   db.query(`SELECT COUNT(*) AS total FROM histories h 
   LEFT JOIN vehicles v ON h.id_vehicle =v.id_vehicle 
   LEFT JOIN users u ON h.id_user = u.id_user
-  WHERE v.type LIKE '${data.search}%' OR v.brand LIKE '${data.search}%' OR v.location LIKE '${data.search}%'
+  WHERE v.type LIKE '${data.search}%' OR v.brand LIKE '${data.search}%' OR v.location LIKE '${data.search}%' OR u.name LIKE '${data.search}%'
   `, (err, res) => {
     if (err) throw err;
     cb(res);
@@ -14,7 +14,7 @@ const countHistory = (data, cb) => {
 const getHistories = (data, cb) => {
   db.query(`SELECT id_history, h.id_user, u.name as user_name, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle 
-  WHERE v.type LIKE '${data.search}%' OR v.brand LIKE '${data.search}%' OR v.location LIKE '${data.search}%'
+  WHERE v.type LIKE '${data.search}%' OR v.brand LIKE '${data.search}%' OR v.location LIKE '${data.search}%' OR u.name LIKE '${data.search}%'
   ORDER by h.id_history ASC
   LIMIT ${data.limit} OFFSET ${data.offset};`, (err, res) => {
     if (err) throw err;

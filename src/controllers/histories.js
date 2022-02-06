@@ -2,6 +2,8 @@
 /* eslint-disable radix */
 const historyModel = require('../models/histories');
 const vehicleModel = require('../models/vehicles');
+const userModel = require('../models/users');
+
 const helperGet = require('../helpers/get');
 const checkDate = require('../helpers/checkDate');
 
@@ -35,26 +37,42 @@ const addHistory = (req, res) => {
     id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
   };
   if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
-    if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
-      const pola = /\D/g;
-      if (!pola.test(prepayment)) {
-        return historyModel.addHistory(data, () => {
-          vehicleModel.addRentCount(id_vehicle);
-          historyModel.newHistory((results) => res.json({
-            success: true,
-            message: 'Successfully added new History',
-            results: results[0],
-          }));
+    return userModel.getUser(id_user, (user) => {
+      if (user.length > 0) {
+        return vehicleModel.getVehicle(id_vehicle, (vehicle) => {
+          if (vehicle.length > 0) {
+            if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
+              const pola = /\D/g;
+              if (!pola.test(prepayment)) {
+                return historyModel.addHistory(data, () => {
+                  vehicleModel.addRentCount(id_vehicle);
+                  historyModel.newHistory((results) => res.json({
+                    success: true,
+                    message: 'Successfully added new History',
+                    results: results[0],
+                  }));
+                });
+              }
+              return res.status(400).json({
+                success: false,
+                message: 'Prepayment must be number',
+              });
+            }
+            return res.status(400).json({
+              success: false,
+              message: 'Wrong date input for rent_start_date and rent_end_date. Format date YYYY-MM-DD',
+            });
+          }
+          return res.status(404).json({
+            success: false,
+            message: 'id_vehicle is undifined',
+          });
         });
       }
       return res.status(400).json({
         success: false,
-        message: 'Prepayment must be number',
+        message: 'id_user is undefined',
       });
-    }
-    return res.status(400).json({
-      success: false,
-      message: 'Wrong date input for rent_start_date and rent_end_date. Format date YYYY-MM-DD',
     });
   }
   return res.status(400).json({
@@ -71,32 +89,55 @@ const editHistory = (req, res) => {
   const data = {
     id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
   };
-
-  const pola = /\D/g;
-  if (!pola.test(prepayment)) {
-    if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
-      return historyModel.editHistory(data, id, (results) => {
-        if (results.changedRows > 0) {
-          return historyModel.getHistory(id, (rslt) => res.json({
-            success: true,
-            message: 'Edited successfully',
-            results: rslt,
-          }));
+  userModel.getUser(id_user, (user) => {
+    if (user.length > 0) {
+      return vehicleModel.getVehicle(id_vehicle, (vehicle) => {
+        if (vehicle.length > 0) {
+          const pola = /\D/g;
+          if (!pola.test(prepayment)) {
+            if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
+              const notReturned = 'not been returned';
+              const returned = 'has been returned';
+              if (status === notReturned || status === returned) {
+                return historyModel.editHistory(data, id, (results) => {
+                  if (results.changedRows > 0) {
+                    return historyModel.getHistory(id, (rslt) => res.json({
+                      success: true,
+                      message: 'Edited successfully',
+                      results: rslt,
+                    }));
+                  }
+                  return res.status(400).json({
+                    success: false,
+                    message: `Failed to edit history with id ${id}. Data has not changed or some data is empty`,
+                  });
+                });
+              }
+              return res.status(400).json({
+                success: false,
+                message: `Failed to edit histories, status must be one of '${notReturned}' / '${returned}'`,
+              });
+            }
+            return res.status(400).json({
+              success: false,
+              message: 'Wrong date input for rent_start_date and rent_end_date. Format date YYYY-MM-DD',
+            });
+          }
+          return res.status(400).json({
+            success: false,
+            message: 'Prepayment must be number',
+          });
         }
-        return res.status(400).json({
+        return res.status(404).json({
           success: false,
-          message: `Failed to edit history with id ${id}. Data has not changed or some data is empty`,
+          message: 'id_vehicle is undifined',
         });
       });
     }
     return res.status(400).json({
       success: false,
-      message: 'Wrong date input for rent_start_date and rent_end_date. Format date YYYY-MM-DD',
+      message: 'id_user is undefined',
     });
-  }
-  return res.status(400).json({
-    success: false,
-    message: 'Prepayment must be number',
   });
 };
 
