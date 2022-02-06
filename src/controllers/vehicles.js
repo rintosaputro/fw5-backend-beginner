@@ -62,17 +62,18 @@ const getVehicle = (req, res) => {
 
 const addVehicle = (req, res) => {
   const {
-    type, brand, capacity, location, price, qty,
+    id_category, brand, capacity, location, price, qty,
   } = req.body;
-  const dataBody = {
-    type, brand, capacity, location, price, qty,
-  };
 
-  if (type && brand && capacity && location && price && qty) {
-    return categoriesModel.checkCategories(type, (checkType) => {
+  if (id_category && brand && capacity && location && price && qty) {
+    return categoriesModel.getCategory(id_category, (checkType) => {
       if (checkType.length > 0) {
         const regex = /\D/g; // Mencari karakter selain angka
         if (!regex.test(price) && !regex.test(qty)) {
+          const typeCategory = checkType[0].type;
+          const dataBody = {
+            id_category, type: typeCategory, brand, capacity, location, price, qty,
+          };
           return vehicleModel.checkVehicle(dataBody, (checkResult) => {
             if (checkResult.length > 0) {
               return res.status(400).json({
@@ -94,14 +95,11 @@ const addVehicle = (req, res) => {
           message: 'Price and qty must be number',
         });
       }
-      return categoriesModel.getCategoriesType((typeCtg) => {
-        const typeList = typeCtg.map((data) => data.type);
-        return res.status(400).json({
-          success: false,
-          message: 'type not available',
-          listType: typeList,
-        });
-      });
+      return categoriesModel.getTypeIdCategories((typeCtg) => res.status(400).json({
+        success: false,
+        message: 'id_category not available',
+        listCategories: typeCtg,
+      }));
     });
   }
   return res.status(400).json({
@@ -113,16 +111,18 @@ const addVehicle = (req, res) => {
 const editVehicle = (req, res) => {
   const { id } = req.params;
   const {
-    type, brand, capacity, location, price, qty, rent_count,
+    id_category, brand, capacity, location, price, qty, rent_count,
   } = req.body;
-  const dataBody = {
-    type, brand, capacity, location, price, qty, rent_count,
-  };
-  if (type && brand && capacity && location && price && qty && rent_count) {
-    return categoriesModel.checkCategories(type, (checkType) => {
+
+  if (id_category && brand && capacity && location && price && qty && rent_count) {
+    return categoriesModel.getCategory(id_category, (checkType) => {
       if (checkType.length > 0) {
         const notNum = /\D/g;
         if (!notNum.test(price) && !notNum.test(qty) && !notNum.test(rent_count)) {
+          const typeCategory = checkType[0].type;
+          const dataBody = {
+            id_category, type: typeCategory, brand, capacity, location, price, qty, rent_count,
+          };
           return vehicleModel.editVehicle(dataBody, id, (results) => {
             if (results.changedRows > 0) {
               return vehicleModel.getVehicle(id, (vehicle) => res.json({
@@ -142,14 +142,11 @@ const editVehicle = (req, res) => {
           message: 'Price, qty and rent_count must be number',
         });
       }
-      return categoriesModel.getCategoriesType((typeCtg) => {
-        const typeList = typeCtg.map((data) => data.type);
-        return res.status(400).json({
-          success: false,
-          message: 'type not available',
-          listType: typeList,
-        });
-      });
+      return categoriesModel.getTypeIdCategories((typeCtg) => res.status(400).json({
+        success: false,
+        message: 'id_category not available',
+        listCategories: typeCtg,
+      }));
     });
   }
   return res.status(400).json({

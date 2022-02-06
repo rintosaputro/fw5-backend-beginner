@@ -58,6 +58,14 @@ const checkCategories = (data, cb) => {
   });
 };
 
+const getTypeIdCategories = (cb) => {
+  db.query(`SELECT id_category, type
+  FROM categories`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 const newCategory = (cb) => {
   db.query('SELECT * FROM categories ORDER BY id_category DESC LIMIT 1', (err, res) => {
     if (err) throw err;
@@ -93,6 +101,7 @@ module.exports = {
   getCategoriesData,
   getCategoriesType,
   checkCategories,
+  getTypeIdCategories,
   newCategory,
   addCategory,
   editCategory,
