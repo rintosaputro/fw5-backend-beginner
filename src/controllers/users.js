@@ -11,9 +11,7 @@ const addUser = (req, res) => {
   const {
     name, display_name, gender, email, phone_number, address, birthdate,
   } = req.body;
-  const data = {
-    name, display_name, gender, email, phone_number, address, birthdate,
-  };
+
   if (gender.toLowerCase() === 'male' || gender.toLowerCase() === 'female') {
     if (name && display_name && email && phone_number && address && birthdate) {
       const notNumber = /\D/g;
@@ -21,6 +19,9 @@ const addUser = (req, res) => {
         const polaEmail = /@/g;
         if (polaEmail.test(email)) {
           if (checkDate(birthdate)) {
+            const data = {
+              name, display_name, gender, email, phone_number, address, birthdate,
+            };
             return userModel.checkUser(data, (checkResult) => {
               if (checkResult.length > 0) {
                 return res.status(400).json({
@@ -64,19 +65,20 @@ const addUser = (req, res) => {
 };
 
 const editUser = (req, res) => {
+  const { id } = req.params;
   const {
     name, display_name, email, phone_number, address, birthdate,
   } = req.body;
-  const data = {
-    name, display_name, email, phone_number, address, birthdate,
-  };
-  const { id } = req.params;
+
   if (name && display_name && email && phone_number && address && birthdate) {
-    const polaNumber = /\D/g;
-    if (!polaNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+')) {
+    const notNumber = /\D/g;
+    if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+')) {
       const polaEmail = /@/g;
       if (polaEmail.test(email)) {
         if (checkDate(birthdate)) {
+          const data = {
+            name, display_name, email, phone_number, address, birthdate,
+          };
           return userModel.editUser(data, id, (results) => {
             if (results.changedRows > 0) {
               return userModel.getUser(id, (rslt) => res.json({

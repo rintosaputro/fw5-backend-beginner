@@ -32,10 +32,7 @@ const addHistory = (req, res) => {
   const {
     id_user, id_vehicle, rent_start_date, rent_end_date, prepayment,
   } = req.body;
-  const status = 'not been returned';
-  const data = {
-    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
-  };
+
   if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
     return userModel.getUser(id_user, (user) => {
       if (user.length > 0) {
@@ -44,6 +41,10 @@ const addHistory = (req, res) => {
             if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
               const pola = /\D/g;
               if (!pola.test(prepayment)) {
+                const status = 'not been returned';
+                const data = {
+                  id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
+                };
                 return historyModel.addHistory(data, () => {
                   vehicleModel.addRentCount(id_vehicle);
                   historyModel.newHistory((results) => res.json({
@@ -86,9 +87,7 @@ const editHistory = (req, res) => {
   const {
     id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
   } = req.body;
-  const data = {
-    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
-  };
+
   if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment && status) {
     return userModel.getUser(id_user, (user) => {
       if (user.length > 0) {
@@ -100,6 +99,9 @@ const editHistory = (req, res) => {
                 const notReturned = 'not been returned';
                 const returned = 'has been returned';
                 if (status.toLowerCase() === notReturned || status.toLowerCase() === returned) {
+                  const data = {
+                    id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
+                  };
                   return historyModel.editHistory(data, id, (results) => {
                     if (results.changedRows > 0) {
                       return historyModel.getHistory(id, (rslt) => res.json({
