@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 const userModel = require('../models/users');
 const helperGet = require('../helpers/get');
+const checkDate = require('../helpers/checkDate');
 
 const getUsers = (req, res) => {
   helperGet(req, res, userModel.getUsers, userModel.countUsers, 'users');
@@ -19,20 +20,26 @@ const addUser = (req, res) => {
       if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+')) {
         const polaEmail = /@/g;
         if (polaEmail.test(email)) {
-          return userModel.checkUser(data, (checkResult) => {
-            if (checkResult.length > 0) {
-              return res.status(400).json({
-                success: false,
-                message: 'Failed to add new user. Data already exists',
+          if (checkDate(birthdate)) {
+            return userModel.checkUser(data, (checkResult) => {
+              if (checkResult.length > 0) {
+                return res.status(400).json({
+                  success: false,
+                  message: 'Failed to add new user. Data already exists',
+                });
+              }
+              return userModel.addUser(data, () => {
+                userModel.newUser((results) => res.json({
+                  success: true,
+                  message: 'Successfully added new user',
+                  results: results[0],
+                }));
               });
-            }
-            return userModel.addUser(data, () => {
-              userModel.newUser((results) => res.json({
-                success: true,
-                message: 'Successfully added new user',
-                results: results[0],
-              }));
             });
+          }
+          return res.status(400).json({
+            success: false,
+            message: 'Wrong birthdate input. Format birthdate YYYY-MM-DD',
           });
         }
         return res.status(400).json({
@@ -42,7 +49,7 @@ const addUser = (req, res) => {
       }
       return res.status(400).json({
         success: false,
-        message: 'Wrong input phone_number',
+        message: 'Wrong phone_number input',
       });
     }
     return res.status(400).json({
@@ -64,32 +71,44 @@ const editUser = (req, res) => {
     name, display_name, email, phone_number, address, birthdate,
   };
   const { id } = req.params;
-  const polaNumber = /\D/g;
-  if (!polaNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+')) {
-    const polaEmail = /@/g;
-    if (polaEmail.test(email)) {
-      return userModel.editUser(data, id, (results) => {
-        if (results.changedRows > 0) {
-          return userModel.getUser(id, (rslt) => res.json({
-            success: true,
-            message: 'Successfully updated user',
-            results: rslt[0],
-          }));
+  if (name && display_name && email && phone_number && address && birthdate) {
+    const polaNumber = /\D/g;
+    if (!polaNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+')) {
+      const polaEmail = /@/g;
+      if (polaEmail.test(email)) {
+        if (checkDate(birthdate)) {
+          return userModel.editUser(data, id, (results) => {
+            if (results.changedRows > 0) {
+              return userModel.getUser(id, (rslt) => res.json({
+                success: true,
+                message: 'Successfully updated user',
+                results: rslt[0],
+              }));
+            }
+            return res.status(400).json({
+              success: false,
+              message: 'Failed to update user. Data hasnt changed.',
+            });
+          });
         }
         return res.status(400).json({
           success: false,
-          message: 'Failed to update user. Data hasnt changed or data is empty',
+          message: 'Wrong birthdate input. Format birthdate YYYY-MM-DD',
         });
+      }
+      return res.status(400).json({
+        success: false,
+        message: 'Wrong email input',
       });
     }
     return res.status(400).json({
       success: false,
-      message: 'Wrong email input',
+      message: 'Wrong phone_number input',
     });
   }
   return res.status(400).json({
     success: false,
-    message: 'Wrong input phone_number',
+    message: `Failed to edit user with id ${id}. Some data is empty.`,
   });
 };
 

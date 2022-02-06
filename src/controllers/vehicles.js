@@ -2,24 +2,43 @@
 /* eslint-disable camelcase */
 const vehicleModel = require('../models/vehicles');
 const helperGet = require('../helpers/get');
+const categoriesModel = require('../models/categories');
 
 const getVehicles = (req, res) => {
   helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
 };
 
 const getVehicleCategory = (req, res) => {
-  const { category } = req.query;
-  vehicleModel.getVehicleCategory(category, (results) => {
+  let { category, page, limit } = req.query;
+  category = category || '';
+  page = parseInt(page, 10) || 1;
+  limit = parseInt(limit, 10) || 5;
+
+  const offset = (page - 1) * limit;
+  const data = { category, limit, offset };
+
+  vehicleModel.getVehicleCategory(data, (results) => {
     if (results.length > 0) {
-      return res.json({
-        success: true,
-        message: 'Vehicles by category',
-        results,
+      return vehicleModel.countVehicleCategory(data, (count) => {
+        const { total } = count[0];
+        const last = Math.ceil(total / limit);
+        res.json({
+          success: true,
+          message: `List vehicles by category ${category}`,
+          results,
+          pageInfo: {
+            prev: page > 1 ? `http://localhost:5000/vehicles/category/?category=${category}&page=${page - 1}&limit=${limit}` : null,
+            next: page < last ? `http://localhost:5000/vehicles/category/?category=${category}&page=${page + 1}&limit=${limit}` : null,
+            totalData: total,
+            currentPage: page,
+            lastPage: last,
+          },
+        });
       });
     }
     return res.status(404).json({
       success: false,
-      message: `Vehicle with category ${category} not found`,
+      message: 'Data not found',
     });
   });
 };
@@ -50,27 +69,39 @@ const addVehicle = (req, res) => {
   };
 
   if (type && brand && capacity && location && price && qty) {
-    const regex = /\D/g; // Mencari karakter selain angka
-    if (!regex.test(price) && !regex.test(qty)) {
-      return vehicleModel.checkVehicle(dataBody, (checkResult) => {
-        if (checkResult.length > 0) {
-          return res.status(400).json({
-            success: false,
-            message: 'Failed to add new vehicle. Data already exists',
+    return categoriesModel.checkCategories(type, (checkType) => {
+      if (checkType.length > 0) {
+        const regex = /\D/g; // Mencari karakter selain angka
+        if (!regex.test(price) && !regex.test(qty)) {
+          return vehicleModel.checkVehicle(dataBody, (checkResult) => {
+            if (checkResult.length > 0) {
+              return res.status(400).json({
+                success: false,
+                message: 'Failed to add new vehicle. Data already exists',
+              });
+            }
+            return vehicleModel.addVehicle(dataBody, () => {
+              vehicleModel.newVehicle((results) => res.json({
+                success: true,
+                message: 'Successfully added new vehicle',
+                results: results[0],
+              }));
+            });
           });
         }
-        return vehicleModel.addVehicle(dataBody, () => {
-          vehicleModel.newVehicle((results) => res.json({
-            success: true,
-            message: 'Successfully added new vehicle',
-            results: results[0],
-          }));
+        return res.status(400).json({
+          success: false,
+          message: 'Price and qty must be number',
+        });
+      }
+      return categoriesModel.getCategoriesType((typeCtg) => {
+        const typeList = typeCtg.map((data) => data.type);
+        return res.status(400).json({
+          success: false,
+          message: 'type not available',
+          listType: typeList,
         });
       });
-    }
-    return res.status(400).json({
-      success: false,
-      message: 'Price and qty must be number',
     });
   }
   return res.status(400).json({
@@ -87,18 +118,43 @@ const editVehicle = (req, res) => {
   const dataBody = {
     type, brand, capacity, location, price, qty, rent_count,
   };
-  vehicleModel.editVehicle(dataBody, id, (results) => {
-    if (results.changedRows > 0) {
-      return vehicleModel.getVehicle(id, (vehicle) => res.json({
-        success: true,
-        message: 'Edited Succesfully',
-        results: vehicle[0],
-      }));
-    }
-    return res.status(400).json({
-      success: false,
-      message: `Failed to edit vehicle with id ${id}. Data hasnt changed or data is empty`,
+  if (type && brand && capacity && location && price && qty && rent_count) {
+    return categoriesModel.checkCategories(type, (checkType) => {
+      if (checkType.length > 0) {
+        const notNum = /\D/g;
+        if (!notNum.test(price) && !notNum.test(qty) && !notNum.test(rent_count)) {
+          return vehicleModel.editVehicle(dataBody, id, (results) => {
+            if (results.changedRows > 0) {
+              return vehicleModel.getVehicle(id, (vehicle) => res.json({
+                success: true,
+                message: 'Edited Succesfully',
+                results: vehicle[0],
+              }));
+            }
+            return res.status(400).json({
+              success: false,
+              message: `Failed to edit vehicle with id ${id}. Data hasnt changed`,
+            });
+          });
+        }
+        return res.status(400).json({
+          success: false,
+          message: 'Price, qty and rent_count must be number',
+        });
+      }
+      return categoriesModel.getCategoriesType((typeCtg) => {
+        const typeList = typeCtg.map((data) => data.type);
+        return res.status(400).json({
+          success: false,
+          message: 'type not available',
+          listType: typeList,
+        });
+      });
     });
+  }
+  return res.status(400).json({
+    success: false,
+    message: `Failed to edit vehicle with id ${id}. Some data is empty.`,
   });
 };
 

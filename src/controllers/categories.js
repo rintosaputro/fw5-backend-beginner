@@ -73,7 +73,7 @@ const editCategory = (req, res) => {
               }
               return res.status(400).json({
                 success: false,
-                message: `Failed to edit category with id ${id}. Data hasnt changed or data is empty`,
+                message: `Failed to edit category with id ${id}. Data hasnt changed`,
               });
             });
           }

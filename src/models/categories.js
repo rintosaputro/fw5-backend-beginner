@@ -44,6 +44,13 @@ const getCategory = (id, cb) => {
   });
 };
 
+const getCategoriesType = (cb) => {
+  db.query('SELECT type FROM categories', (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 const checkCategories = (data, cb) => {
   db.query(`SELECT * FROM categories WHERE type='${data}'`, (err, res) => {
     if (err) throw err;
@@ -84,6 +91,7 @@ module.exports = {
   getCategories,
   countCategoryData,
   getCategoriesData,
+  getCategoriesType,
   checkCategories,
   newCategory,
   addCategory,

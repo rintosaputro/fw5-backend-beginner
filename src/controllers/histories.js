@@ -89,55 +89,61 @@ const editHistory = (req, res) => {
   const data = {
     id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
   };
-  userModel.getUser(id_user, (user) => {
-    if (user.length > 0) {
-      return vehicleModel.getVehicle(id_vehicle, (vehicle) => {
-        if (vehicle.length > 0) {
-          const pola = /\D/g;
-          if (!pola.test(prepayment)) {
-            if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
-              const notReturned = 'not been returned';
-              const returned = 'has been returned';
-              if (status.toLowerCase() === notReturned || status.toLowerCase() === returned) {
-                return historyModel.editHistory(data, id, (results) => {
-                  if (results.changedRows > 0) {
-                    return historyModel.getHistory(id, (rslt) => res.json({
-                      success: true,
-                      message: 'Edited successfully',
-                      results: rslt,
-                    }));
-                  }
-                  return res.status(400).json({
-                    success: false,
-                    message: `Failed to edit history with id ${id}. Data has not changed or some data is empty`,
+  if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment && status) {
+    return userModel.getUser(id_user, (user) => {
+      if (user.length > 0) {
+        return vehicleModel.getVehicle(id_vehicle, (vehicle) => {
+          if (vehicle.length > 0) {
+            const pola = /\D/g;
+            if (!pola.test(prepayment)) {
+              if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
+                const notReturned = 'not been returned';
+                const returned = 'has been returned';
+                if (status.toLowerCase() === notReturned || status.toLowerCase() === returned) {
+                  return historyModel.editHistory(data, id, (results) => {
+                    if (results.changedRows > 0) {
+                      return historyModel.getHistory(id, (rslt) => res.json({
+                        success: true,
+                        message: 'Edited successfully',
+                        results: rslt,
+                      }));
+                    }
+                    return res.status(400).json({
+                      success: false,
+                      message: `Failed to edit history with id ${id}. Data has not changed`,
+                    });
                   });
+                }
+                return res.status(400).json({
+                  success: false,
+                  message: `Failed to edit histories, status must be one of '${notReturned}' / '${returned}'`,
                 });
               }
               return res.status(400).json({
                 success: false,
-                message: `Failed to edit histories, status must be one of '${notReturned}' / '${returned}'`,
+                message: 'Wrong date input for rent_start_date and rent_end_date. Format date YYYY-MM-DD',
               });
             }
             return res.status(400).json({
               success: false,
-              message: 'Wrong date input for rent_start_date and rent_end_date. Format date YYYY-MM-DD',
+              message: 'Prepayment must be number',
             });
           }
-          return res.status(400).json({
+          return res.status(404).json({
             success: false,
-            message: 'Prepayment must be number',
+            message: 'id_vehicle is undifined',
           });
-        }
-        return res.status(404).json({
-          success: false,
-          message: 'id_vehicle is undifined',
         });
+      }
+      return res.status(400).json({
+        success: false,
+        message: 'id_user is undefined',
       });
-    }
-    return res.status(400).json({
-      success: false,
-      message: 'id_user is undefined',
     });
+  }
+  return res.status(400).json({
+    success: false,
+    message: `Failed edit history with id ${id}, data must be filled`,
   });
 };
 

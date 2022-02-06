@@ -19,8 +19,8 @@ const get = (request, response, model, countModel, table) => {
           message: `List ${table}`,
           results,
           pageInfo: {
-            prev: page > 1 ? `http://localhost:5000/${table}?page=${page - 1}` : null,
-            next: page < last ? `http://localhost:5000/${table}?page=${page + 1}` : null,
+            prev: page > 1 ? `http://localhost:5000/${table}?search=${search}&page=${page - 1}&limit=${limit}` : null,
+            next: page < last ? `http://localhost:5000/${table}?search=${search}&page=${page + 1}&limit=${limit}` : null,
             totalData: total,
             currentPage: page,
             lastPage: last,

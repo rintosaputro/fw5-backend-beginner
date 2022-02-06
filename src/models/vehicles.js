@@ -8,15 +8,27 @@ const countVehicle = (data, cb) => {
 };
 
 const getVehicles = (data, cb) => {
-  db.query(`SELECT * FROM vehicles WHERE brand LIKE '${data.search}%' LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
+  db.query(`SELECT * FROM vehicles WHERE brand LIKE '${data.search}%' 
+  LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
+const countVehicleCategory = (data, cb) => {
+  db.query(`SELECT COUNT(*) as total FROM vehicles v
+  LEFT JOIN categories c ON c.id_category=v.id_category
+  WHERE c.type LIKE '${data.category}%'`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
 };
 
 const getVehicleCategory = (data, cb) => {
-  db.query(`SELECT v.* FROM vehicles v LEFT JOIN categories c ON v.id_category = c.id_category 
-  WHERE c.type LIKE '${data}%';
+  db.query(`SELECT v.* FROM vehicles v 
+  LEFT JOIN categories c ON v.id_category = c.id_category 
+  WHERE c.type LIKE '${data.category}%'
+  LIMIT ${data.limit} OFFSET ${data.offset};
   `, (err, res) => {
     if (err) throw err;
     cb(res);
@@ -73,6 +85,7 @@ const addRentCount = (id) => {
 module.exports = {
   countVehicle,
   getVehicles,
+  countVehicleCategory,
   getVehicleCategory,
   getVehicle,
   checkVehicle,
