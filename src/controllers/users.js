@@ -15,8 +15,8 @@ const addUser = (req, res) => {
   };
   if (gender.toLowerCase() === 'male' || gender.toLowerCase() === 'female') {
     if (name && display_name && email && phone_number && address && birthdate) {
-      const polaNumber = /\D/g;
-      if (!polaNumber.test(phone_number)) {
+      const notNumber = /\D/g;
+      if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+')) {
         const polaEmail = /@/g;
         if (polaEmail.test(email)) {
           return userModel.checkUser(data, (checkResult) => {
@@ -42,7 +42,7 @@ const addUser = (req, res) => {
       }
       return res.status(400).json({
         success: false,
-        message: 'Phone number must be number',
+        message: 'Wrong input phone_number',
       });
     }
     return res.status(400).json({
@@ -65,7 +65,7 @@ const editUser = (req, res) => {
   };
   const { id } = req.params;
   const polaNumber = /\D/g;
-  if (!polaNumber.test(phone_number)) {
+  if (!polaNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+')) {
     const polaEmail = /@/g;
     if (polaEmail.test(email)) {
       return userModel.editUser(data, id, (results) => {
@@ -89,7 +89,7 @@ const editUser = (req, res) => {
   }
   return res.status(400).json({
     success: false,
-    message: 'Phone number must be number',
+    message: 'Wrong input phone_number',
   });
 };
 

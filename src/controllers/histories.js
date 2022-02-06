@@ -98,7 +98,7 @@ const editHistory = (req, res) => {
             if (checkDate(rent_start_date) && checkDate(rent_end_date)) {
               const notReturned = 'not been returned';
               const returned = 'has been returned';
-              if (status === notReturned || status === returned) {
+              if (status.toLowerCase() === notReturned || status.toLowerCase() === returned) {
                 return historyModel.editHistory(data, id, (results) => {
                   if (results.changedRows > 0) {
                     return historyModel.getHistory(id, (rslt) => res.json({
