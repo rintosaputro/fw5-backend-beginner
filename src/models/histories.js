@@ -54,6 +54,13 @@ const editHistory = (data, id, cb) => {
   });
 };
 
+const getHistoryDeleted = (id, cb) => {
+  db.query(`SELECT id_history, rent_start_date, rent_end_date FROM histories WHERE id_history=${id}`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 const deleteHistory = (id, cb) => {
   db.query('DELETE FROM histories WHERE id_history=?', [id], (err, res) => {
     if (err) throw err;
@@ -68,5 +75,6 @@ module.exports = {
   newHistory,
   addHistory,
   editHistory,
+  getHistoryDeleted,
   deleteHistory,
 };

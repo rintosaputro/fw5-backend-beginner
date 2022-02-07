@@ -151,7 +151,7 @@ const editHistory = (req, res) => {
 
 const deleteHistory = (req, res) => {
   const { id } = req.params;
-  historyModel.getHistory(id, (historyDeleted) => {
+  historyModel.getHistoryDeleted(id, (historyDeleted) => {
     historyModel.deleteHistory(id, (results) => {
       if (results.affectedRows > 0) {
         return res.json({
