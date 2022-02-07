@@ -123,7 +123,7 @@ const editHistory = (req, res) => {
               }
               return res.status(400).json({
                 success: false,
-                message: 'Wrong date input for rent_start_date and rent_end_date. Format date YYYY-MM-DD',
+                message: 'Wrong date input for rent_start_date or rent_end_date. Format date YYYY-MM-DD',
               });
             }
             return res.status(400).json({
