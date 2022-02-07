@@ -45,9 +45,9 @@ const addHistory = (req, res) => {
                 const data = {
                   id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status,
                 };
-                return historyModel.addHistory(data, () => {
+                return historyModel.addHistory(data, (resAdd) => {
                   vehicleModel.addRentCount(id_vehicle);
-                  historyModel.newHistory((results) => res.json({
+                  historyModel.getHistory(resAdd.insertId, (results) => res.json({
                     success: true,
                     message: 'Successfully added new History',
                     results: results[0],

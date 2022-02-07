@@ -7,6 +7,23 @@ const getUsers = (req, res) => {
   helperGet(req, res, userModel.getUsers, userModel.countUsers, 'users');
 };
 
+const getUser = (req, res) => {
+  const { id } = req.params;
+  userModel.getUser(id, (results) => {
+    if (results.length > 0) {
+      return res.json({
+        success: true,
+        message: `User with id ${id}`,
+        results: results[0],
+      });
+    }
+    return res.status(404).json({
+      success: false,
+      message: `User with id ${id} not found`,
+    });
+  });
+};
+
 const addUser = (req, res) => {
   const {
     name, display_name, gender, email, phone_number, address, birthdate,
@@ -135,6 +152,7 @@ const deleteUser = (req, res) => {
 
 module.exports = {
   getUsers,
+  getUser,
   addUser,
   editUser,
   deleteUser,

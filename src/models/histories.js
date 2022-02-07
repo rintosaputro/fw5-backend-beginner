@@ -41,9 +41,9 @@ const newHistory = (cb) => {
 };
 
 const addHistory = (data, cb) => {
-  db.query('INSERT INTO histories SET ?', [data], (err) => {
+  db.query('INSERT INTO histories SET ?', [data], (err, res) => {
     if (err) throw err;
-    cb();
+    cb(res);
   });
 };
 
