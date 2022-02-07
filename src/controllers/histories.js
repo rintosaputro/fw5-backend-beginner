@@ -131,7 +131,7 @@ const editHistory = (req, res) => {
               message: 'Prepayment must be number',
             });
           }
-          return res.status(404).json({
+          return res.status(400).json({
             success: false,
             message: 'id_vehicle is undifined',
           });
