@@ -1,5 +1,6 @@
 /* eslint-disable prefer-const */
 /* eslint-disable camelcase */
+const camelCase = require('camelcase-keys');
 const vehicleModel = require('../models/vehicles');
 const helperGet = require('../helpers/get');
 const categoriesModel = require('../models/categories');
@@ -18,11 +19,12 @@ const getVehicleCategory = (req, res) => {
   const offset = (page - 1) * limit;
   const data = { category, limit, offset };
 
-  vehicleModel.getVehicleCategory(data, (results) => {
-    if (results.length > 0) {
+  vehicleModel.getVehicleCategory(data, (resultsFin) => {
+    if (resultsFin.length > 0) {
       return vehicleModel.countVehicleCategory(data, (count) => {
         const { total } = count[0];
         const last = Math.ceil(total / limit);
+        const results = camelCase(resultsFin);
         res.json({
           success: true,
           message: `List vehicles by category ${category}`,
@@ -51,7 +53,7 @@ const getVehicle = (req, res) => {
       return res.json({
         success: true,
         message: 'Detail Vehicle',
-        results: results[0],
+        results: camelCase(results[0]),
       });
     }
     return res.status(404).json({
@@ -96,7 +98,7 @@ const addVehicle = (req, res) => {
                 vehicleModel.getVehicle(addRes.insertId, (results) => res.json({
                   success: true,
                   message: 'Successfully added new vehicle',
-                  results: results[0],
+                  results: camelCase(results[0]),
                 }));
               });
             });
@@ -140,7 +142,7 @@ const editVehicle = (req, res) => {
               return vehicleModel.getVehicle(id, (vehicle) => res.json({
                 success: true,
                 message: 'Edited Succesfully',
-                results: vehicle[0],
+                results: camelCase(vehicle[0]),
               }));
             }
             return res.status(400).json({
@@ -175,7 +177,7 @@ const deleteVehicle = (req, res) => {
         return res.json({
           success: true,
           message: `Vehicle with id ${id} successfully deleted`,
-          results: vehicleDeleted[0],
+          results: camelCase(vehicleDeleted[0]),
         });
       }
       return res.status(400).json({

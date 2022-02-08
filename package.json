@@ -17,6 +17,7 @@
     "nodemon": "^2.0.15"
   },
   "dependencies": {
+    "camelcase-keys": "^7.0.2",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "multer": "^1.4.4",

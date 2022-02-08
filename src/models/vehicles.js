@@ -1,5 +1,7 @@
 const db = require('../helpers/db');
 
+const { APP_URL } = process.env;
+
 const countVehicle = (data, cb) => {
   db.query(`SELECT COUNT(*) as total FROM vehicles WHERE brand LIKE '${data.search}%'`, (err, res) => {
     if (err) throw err;
@@ -8,7 +10,8 @@ const countVehicle = (data, cb) => {
 };
 
 const getVehicles = (data, cb) => {
-  db.query(`SELECT * FROM vehicles WHERE brand LIKE '${data.search}%' 
+  db.query(`SELECT id_vehicle, id_category, type, brand , CONCAT('${APP_URL}/', image) AS image, capacity, location, price, qty, rent_count, status 
+  FROM vehicles WHERE brand LIKE '${data.search}%' 
   LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
     if (err) throw err;
     cb(res);
@@ -25,7 +28,8 @@ const countVehicleCategory = (data, cb) => {
 };
 
 const getVehicleCategory = (data, cb) => {
-  db.query(`SELECT v.* FROM vehicles v 
+  db.query(`SELECT v.id_vehicle, v.id_category, v.type, v.brand , CONCAT('${APP_URL}/', v.image) AS image, v.capacity, v.location, v.price, v.qty, v.rent_count, v.status 
+  FROM vehicles v 
   LEFT JOIN categories c ON v.id_category = c.id_category 
   WHERE c.type LIKE '${data.category}%'
   LIMIT ${data.limit} OFFSET ${data.offset};
@@ -36,7 +40,8 @@ const getVehicleCategory = (data, cb) => {
 };
 
 const getVehicle = (id, cb) => {
-  db.query('SELECT * FROM vehicles WHERE id_vehicle=?', [id], (err, res) => {
+  db.query(`SELECT id_vehicle, id_category, type, brand , CONCAT('${APP_URL}/', image) AS image, capacity, location, price, qty, rent_count, status 
+  FROM vehicles WHERE id_vehicle=?`, [id], (err, res) => {
     if (err) throw err;
     cb(res);
   });

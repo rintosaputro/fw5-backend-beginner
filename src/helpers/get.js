@@ -1,4 +1,5 @@
 /* eslint-disable radix */
+const camelCase = require('camelcase-keys');
 
 const get = (request, response, model, countModel, table) => {
   let { search, page, limit } = request.query;
@@ -33,11 +34,12 @@ const get = (request, response, model, countModel, table) => {
   const offset = (page - 1) * limit;
   const data = { search, limit, offset };
 
-  return model(data, (results) => {
-    if (results.length > 0) {
+  return model(data, (resultsFin) => {
+    if (resultsFin.length > 0) {
       return countModel(data, (count) => {
         const { total } = count[0];
         const last = Math.ceil(total / limit);
+        const results = camelCase(resultsFin);
         response.json({
           success: true,
           message: `List ${table}`,

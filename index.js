@@ -10,9 +10,9 @@ app.use(require('./src/routes'));
 
 app.use('/uploads', express.static('uploads'));
 
-const { APP_PORT } = process.env;
+const { PORT, APP_PORT } = process.env;
 
-app.listen(APP_PORT, () => {
+app.listen(PORT || APP_PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`App running on port ${APP_PORT}`);
+  console.log(`App running on port ${PORT || APP_PORT}`);
 });
