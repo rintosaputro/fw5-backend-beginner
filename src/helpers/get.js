@@ -2,14 +2,38 @@
 
 const get = (request, response, model, countModel, table) => {
   let { search, page, limit } = request.query;
+
   search = search || '';
-  page = parseInt(page) || 1;
-  limit = parseInt(limit) || 5;
+  if (page) {
+    if (/\D/g.test(page)) {
+      return response.json({
+        success: false,
+        message: 'page must be number',
+      });
+    }
+    page = parseInt(page);
+  }
+  if (!page) {
+    page = 1;
+  }
+
+  if (limit) {
+    if (/\D/g.test(limit)) {
+      return response.json({
+        success: false,
+        message: 'limit must be number',
+      });
+    }
+    limit = parseInt(limit);
+  }
+  if (!limit) {
+    limit = 5;
+  }
 
   const offset = (page - 1) * limit;
   const data = { search, limit, offset };
 
-  model(data, (results) => {
+  return model(data, (results) => {
     if (results.length > 0) {
       return countModel(data, (count) => {
         const { total } = count[0];
