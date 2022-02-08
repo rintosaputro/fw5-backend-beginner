@@ -175,15 +175,22 @@ const deleteVehicle = (req, res) => {
   vehicleModel.getVehicle(id, (vehicleDeleted) => {
     vehicleModel.deleteVehicle(id, (results) => {
       if (results.affectedRows > 0) {
-        const arrImage = vehicleDeleted[0].image.split('/');
-        const fileImage = arrImage[arrImage.length - 1];
-        return fs.rm(fileImage, {}, (err) => {
-          if (err) throw err;
-          return res.json({
-            success: true,
-            message: `Vehicle with id ${id} successfully deleted`,
-            results: camelCase(vehicleDeleted[0]),
+        if (vehicleDeleted[0].image !== null) {
+          const arrImage = vehicleDeleted[0].image.split('/');
+          const fileImage = arrImage[arrImage.length - 1];
+          return fs.rm(fileImage, {}, (err) => {
+            if (err) throw err;
+            return res.json({
+              success: true,
+              message: `Vehicle with id ${id} successfully deleted`,
+              results: camelCase(vehicleDeleted[0]),
+            });
           });
+        }
+        return res.json({
+          success: true,
+          message: `Vehicle with id ${id} successfully deleted`,
+          results: camelCase(vehicleDeleted[0]),
         });
       }
       return res.status(400).json({
