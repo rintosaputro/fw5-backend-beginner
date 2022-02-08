@@ -6,8 +6,8 @@ const {
 
 vehicles.get('/', getVehicles);
 vehicles.get('/category', getVehicleCategory);
-vehicles.get('/:id', getVehicle);
 vehicles.post('/', addVehicle);
+vehicles.get('/:id', getVehicle);
 vehicles.patch('/:id', editVehicle);
 vehicles.delete('/:id', deleteVehicle);
 

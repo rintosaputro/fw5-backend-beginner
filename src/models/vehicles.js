@@ -49,7 +49,7 @@ const checkVehicle = (data, cb) => {
     cb(res);
   });
 };
-
+//
 const newVehicle = (cb) => {
   db.query('SELECT * FROM vehicles ORDER BY id_vehicle DESC LIMIT 1', (err, res) => {
     if (err) throw err;

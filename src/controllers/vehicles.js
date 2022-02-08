@@ -3,6 +3,7 @@
 const vehicleModel = require('../models/vehicles');
 const helperGet = require('../helpers/get');
 const categoriesModel = require('../models/categories');
+const upload = require('../helpers/upload').single('image');
 
 const getVehicles = (req, res) => {
   helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
@@ -61,50 +62,61 @@ const getVehicle = (req, res) => {
 };
 
 const addVehicle = (req, res) => {
-  const {
-    id_category, brand, capacity, location, price, qty,
-  } = req.body;
-
-  if (id_category && brand && capacity && location && price && qty) {
-    return categoriesModel.getCategory(id_category, (checkType) => {
-      if (checkType.length > 0) {
-        const regex = /\D/g; // Mencari karakter selain angka
-        if (!regex.test(price) && !regex.test(qty)) {
-          const typeCategory = checkType[0].type;
-          const dataBody = {
-            id_category, type: typeCategory, brand, capacity, location, price, qty,
-          };
-          return vehicleModel.checkVehicle(dataBody, (checkResult) => {
-            if (checkResult.length > 0) {
-              return res.status(400).json({
-                success: false,
-                message: 'Failed to add new vehicle. Data already exists',
+  upload(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
+    const {
+      id_category, brand, capacity, location, price, qty,
+    } = req.body;
+    let image;
+    if (req.file) {
+      image = req.file.path;
+    }
+    if (id_category && brand && capacity && location && price && qty) {
+      return categoriesModel.getCategory(id_category, (checkType) => {
+        if (checkType.length > 0) {
+          const regex = /\D/g; // Mencari karakter selain angka
+          if (!regex.test(price) && !regex.test(qty)) {
+            const typeCategory = checkType[0].type;
+            const data = {
+              id_category, type: typeCategory, brand, image, capacity, location, price, qty,
+            };
+            return vehicleModel.checkVehicle(data, (checkResult) => {
+              if (checkResult.length > 0) {
+                return res.status(400).json({
+                  success: false,
+                  message: 'Failed to add new vehicle. Data already exists',
+                });
+              }
+              return vehicleModel.addVehicle(data, (addRes) => {
+                vehicleModel.getVehicle(addRes.insertId, (results) => res.json({
+                  success: true,
+                  message: 'Successfully added new vehicle',
+                  results: results[0],
+                }));
               });
-            }
-            return vehicleModel.addVehicle(dataBody, () => {
-              vehicleModel.newVehicle((results) => res.json({
-                success: true,
-                message: 'Successfully added new vehicle',
-                results: results[0],
-              }));
             });
+          }
+          return res.status(400).json({
+            success: false,
+            message: 'Price and qty must be number',
           });
         }
-        return res.status(400).json({
+        return categoriesModel.getTypeIdCategories((typeCtg) => res.status(400).json({
           success: false,
-          message: 'Price and qty must be number',
-        });
-      }
-      return categoriesModel.getTypeIdCategories((typeCtg) => res.status(400).json({
-        success: false,
-        message: 'id_category not available',
-        listCategories: typeCtg,
-      }));
+          message: 'id_category not available',
+          listCategories: typeCtg,
+        }));
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      message: 'Failed to add new vehicle, data must be filled',
     });
-  }
-  return res.status(400).json({
-    success: false,
-    message: 'Failed to add new vehicle, data must be filled',
   });
 };
 

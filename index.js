@@ -8,7 +8,11 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(require('./src/routes'));
 
-app.listen(5000, () => {
+app.use('/uploads', express.static('uploads'));
+
+const { APP_PORT } = process.env;
+
+app.listen(APP_PORT, () => {
   // eslint-disable-next-line no-console
-  console.log('App running on port 5000');
+  console.log(`App running on port ${APP_PORT}`);
 });
