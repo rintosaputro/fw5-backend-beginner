@@ -52,9 +52,9 @@ const get = (request, response, model, countModel, table) => {
         });
       });
     }
-    return response.status(404).json({
+    return response.json({
       success: false,
-      message: 'Data not found',
+      message: `${search} not found`,
     });
   });
 };

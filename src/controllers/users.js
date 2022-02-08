@@ -32,7 +32,7 @@ const addUser = (req, res) => {
   if (gender.toLowerCase() === 'male' || gender.toLowerCase() === 'female') {
     if (name && display_name && email && phone_number && address && birthdate) {
       const notNumber = /\D/g;
-      if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+')) {
+      if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+') && phone_number.length < 15 && phone_number.length >= 10) {
         const polaEmail = /@/g;
         if (polaEmail.test(email)) {
           if (checkDate(birthdate)) {
@@ -89,7 +89,7 @@ const editUser = (req, res) => {
 
   if (name && display_name && email && phone_number && address && birthdate) {
     const notNumber = /\D/g;
-    if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+')) {
+    if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+') && phone_number.length < 15 && phone_number.length >= 10) {
       const polaEmail = /@/g;
       if (polaEmail.test(email)) {
         if (checkDate(birthdate)) {
