@@ -6,6 +6,7 @@ const vehicleModel = require('../models/vehicles');
 const helperGet = require('../helpers/get');
 const categoriesModel = require('../models/categories');
 const upload = require('../helpers/upload').single('image');
+const unlink = require('../helpers/unlink');
 
 const getVehicles = (req, res) => {
   helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
@@ -90,6 +91,7 @@ const addVehicle = (req, res) => {
             };
             return vehicleModel.checkVehicle(data, (checkResult) => {
               if (checkResult.length > 0) {
+                unlink(req);
                 return res.status(400).json({
                   success: false,
                   message: 'Failed to add new vehicle. Data already exists',
@@ -104,11 +106,13 @@ const addVehicle = (req, res) => {
               });
             });
           }
+          unlink(req);
           return res.status(400).json({
             success: false,
             message: 'Price and qty must be number',
           });
         }
+        unlink(req);
         return categoriesModel.getTypeIdCategories((typeCtg) => res.status(400).json({
           success: false,
           message: 'id_category not available',
@@ -116,6 +120,7 @@ const addVehicle = (req, res) => {
         }));
       });
     }
+    unlink(req);
     return res.status(400).json({
       success: false,
       message: 'Failed to add new vehicle, data must be filled',
