@@ -10,7 +10,7 @@ const countVehicle = (data, cb) => {
 };
 
 const getVehicles = (data, cb) => {
-  db.query(`SELECT id_vehicle, id_category, type, brand , CONCAT('${APP_URL}/', image) AS image, capacity, location, price, qty, rent_count, status 
+  db.query(`SELECT id_vehicle, id_category, type, brand , CONCAT('${APP_URL}/', image) AS image, capacity, location, price, qty, rent_count, status, createdAt, updatedAt
   FROM vehicles WHERE brand LIKE '${data.search}%' 
   LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
     if (err) throw err;
@@ -28,7 +28,7 @@ const countVehicleCategory = (data, cb) => {
 };
 
 const getVehicleCategory = (data, cb) => {
-  db.query(`SELECT v.id_vehicle, v.id_category, v.type, v.brand , CONCAT('${APP_URL}/', v.image) AS image, v.capacity, v.location, v.price, v.qty, v.rent_count, v.status 
+  db.query(`SELECT v.id_vehicle, v.id_category, v.type, v.brand , CONCAT('${APP_URL}/', v.image) AS image, v.capacity, v.location, v.price, v.qty, v.rent_count, v.status, v.createdAt, v.updatedAt
   FROM vehicles v 
   LEFT JOIN categories c ON v.id_category = c.id_category 
   WHERE c.type LIKE '${data.category}%'
@@ -40,7 +40,7 @@ const getVehicleCategory = (data, cb) => {
 };
 
 const getVehicle = (id, cb) => {
-  db.query(`SELECT id_vehicle, id_category, type, brand , CONCAT('${APP_URL}/', image) AS image, capacity, location, price, qty, rent_count, status 
+  db.query(`SELECT id_vehicle, id_category, type, brand , CONCAT('${APP_URL}/', image) AS image, capacity, location, price, qty, rent_count, status, createdAt, updatedAt
   FROM vehicles WHERE id_vehicle=?`, [id], (err, res) => {
     if (err) throw err;
     cb(res);

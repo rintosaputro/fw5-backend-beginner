@@ -7,6 +7,7 @@ const helperGet = require('../helpers/get');
 const categoriesModel = require('../models/categories');
 const upload = require('../helpers/upload').single('image');
 const deleteImg = require('../helpers/deleteImg');
+const response = require('../helpers/response');
 
 const getVehicles = (req, res) => {
   helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
@@ -27,24 +28,18 @@ const getVehicleCategory = (req, res) => {
         const { total } = count[0];
         const last = Math.ceil(total / limit);
         const results = camelCase(resultsFin);
-        res.json({
-          success: true,
-          message: `List vehicles by category ${category}`,
-          results,
-          pageInfo: {
-            prev: page > 1 ? `http://localhost:5000/vehicles/category/?category=${category}&page=${page - 1}&limit=${limit}` : null,
-            next: page < last ? `http://localhost:5000/vehicles/category/?category=${category}&page=${page + 1}&limit=${limit}` : null,
-            totalData: total,
-            currentPage: page,
-            lastPage: last,
-          },
-        });
+        const pageInfo = {
+          prev: page > 1 ? `http://localhost:5000/vehicles/category/?category=${category}&page=${page - 1}&limit=${limit}` : null,
+          next: page < last ? `http://localhost:5000/vehicles/category/?category=${category}&page=${page + 1}&limit=${limit}` : null,
+          totalData: total,
+          currentPage: page,
+          lastPage: last,
+        };
+
+        return response(res, `List vehicles by category ${category}`, results, pageInfo);
       });
     }
-    return res.status(404).json({
-      success: false,
-      message: 'Data not found',
-    });
+    return response(res, 'Page not found', null, null, 404);
   });
 };
 
@@ -52,26 +47,16 @@ const getVehicle = (req, res) => {
   const { id } = req.params;
   vehicleModel.getVehicle(id, (results) => {
     if (results.length > 0) {
-      return res.json({
-        success: true,
-        message: 'Detail Vehicle',
-        results: camelCase(results[0]),
-      });
+      return response(res, 'Detail Vehicle', camelCase(results[0]), null);
     }
-    return res.status(404).json({
-      success: false,
-      message: `vehicle not found with id ${id}`,
-    });
+    return response(res, `Vehicle not found with id ${id}`, null, null, 404);
   });
 };
 
 const addVehicle = (req, res) => {
   upload(req, res, (err) => {
     if (err) {
-      return res.status(400).json({
-        success: false,
-        message: err.message,
-      });
+      return response(res, err.message, null, null, 400);
     }
     const {
       id_category, brand, capacity, location, price, qty,
@@ -92,39 +77,22 @@ const addVehicle = (req, res) => {
             return vehicleModel.checkVehicle(data, (checkResult) => {
               if (checkResult.length > 0) {
                 deleteImg(req);
-                return res.status(400).json({
-                  success: false,
-                  message: 'Failed to add new vehicle. Data already exists',
-                });
+                return response(res, 'Failed to add new vehicle. Data already exists', null, null, 400);
               }
               return vehicleModel.addVehicle(data, (addRes) => {
-                vehicleModel.getVehicle(addRes.insertId, (results) => res.json({
-                  success: true,
-                  message: 'Successfully added new vehicle',
-                  results: camelCase(results[0]),
-                }));
+                vehicleModel.getVehicle(addRes.insertId, (results) => response(res, 'Successfully added new vehicle', camelCase(results[0])));
               });
             });
           }
           deleteImg(req);
-          return res.status(400).json({
-            success: false,
-            message: 'Price and qty must be number',
-          });
+          return response(res, 'Price and qty must be number', null, null, 400);
         }
         deleteImg(req);
-        return categoriesModel.getTypeIdCategories((typeCtg) => res.status(400).json({
-          success: false,
-          message: 'id_category not available',
-          listCategories: typeCtg,
-        }));
+        return response(res, 'id_category not available', null, null, 400);
       });
     }
     deleteImg(req);
-    return res.status(400).json({
-      success: false,
-      message: 'Failed to add new vehicle, data must be filled',
-    });
+    return response(res, 'Failed to add new vehicle, data must be filled', null, null, 400);
   });
 };
 
@@ -145,34 +113,17 @@ const editVehicle = (req, res) => {
           };
           return vehicleModel.editVehicle(dataBody, id, (results) => {
             if (results.changedRows > 0) {
-              return vehicleModel.getVehicle(id, (vehicle) => res.json({
-                success: true,
-                message: 'Edited Succesfully',
-                results: camelCase(vehicle[0]),
-              }));
+              return vehicleModel.getVehicle(id, (vehicle) => response(res, 'Edited Succesfully', camelCase(vehicle[0]), null));
             }
-            return res.status(400).json({
-              success: false,
-              message: `Failed to edit vehicle with id ${id}. Data hasnt changed`,
-            });
+            return response(res, `Failed to edit vehicle with id ${id}. Data hasnt changed`, null, null, 400);
           });
         }
-        return res.status(400).json({
-          success: false,
-          message: 'Price, qty and rent_count must be number',
-        });
+        return response(res, 'Price, qty and rent_count must be number', null, null, 400);
       }
-      return categoriesModel.getTypeIdCategories((typeCtg) => res.status(400).json({
-        success: false,
-        message: 'id_category not available',
-        listCategories: typeCtg,
-      }));
+      return response(res, 'id category not available', null, null, 400);
     });
   }
-  return res.status(400).json({
-    success: false,
-    message: `Failed to edit vehicle with id ${id}. Some data is empty.`,
-  });
+  return response(res, `Failed to edit vehicle with id ${id}. Some data is empty.`, null, null, 400);
 };
 
 const deleteVehicle = (req, res) => {
@@ -185,23 +136,11 @@ const deleteVehicle = (req, res) => {
           const fileImage = arrImage[arrImage.length - 1];
           return fs.rm(fileImage, {}, (err) => {
             if (err) throw err;
-            return res.json({
-              success: true,
-              message: `Vehicle with id ${id} successfully deleted`,
-              results: camelCase(vehicleDeleted[0]),
-            });
+            return response(res, `Vehicle with id ${id} successfully deleted`, camelCase(vehicleDeleted[0]), null);
           });
         }
-        return res.json({
-          success: true,
-          message: `Vehicle with id ${id} successfully deleted`,
-          results: camelCase(vehicleDeleted[0]),
-        });
       }
-      return res.status(400).json({
-        success: false,
-        message: `Failed to delete vehicle with id ${id}`,
-      });
+      return response(res, `Failed to delete vehicle with id ${id}`, null, null, 400);
     });
   });
 };
