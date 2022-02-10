@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable max-len */
 /* eslint-disable prefer-const */
 /* eslint-disable camelcase */
@@ -164,7 +165,13 @@ const editVehicle = (req, res) => {
         if (req.file) {
           data.image = req.file.path;
         }
-        console.log(Object.values(data));
+        if (data.id_category) {
+          categoriesModel.getCategory(data.id_category, (category) => {
+            if (category.length === 0) {
+              return response(req, res, 'id category is not available', null, null, 400);
+            }
+          });
+        }
         const pola = /\D/g;
         if (data.price && pola.test(data.price)) {
           return response(req, res, 'price must be number', null, null, 404);
@@ -175,22 +182,15 @@ const editVehicle = (req, res) => {
         if (data.rent_count && pola.test(data.rent_count)) {
           return response(req, res, 'rent_count must be number', null, null, 404);
         }
-        // if (data.price || data.qty || data.rent_count) {
-
-        // }
-        if (data) {
-          // return vehicleModel.editAllVehicle(data, id, (results) => {
-          //   if (results.affectedRows > 0) {
-          // eslint-disable-next-line max-len
-          //     return vehicleModel.getVehicle(id, (edited) => response(req, res, 'Data vehicle', edited, null));
-          //   }
-          //   return response(req, res, 'Failed to update vehicle', null, null, 500);
-          // });
-          console.log('ok');
-        } else {
-          console.log('kosong');
+        if (Object.keys(data).length > 0) {
+          return vehicleModel.editAllVehicle(data, id, (results) => {
+            if (results.affectedRows > 0) {
+              return vehicleModel.getVehicle(id, (edited) => response(req, res, 'Data vehicle', edited, null));
+            }
+            return response(req, res, 'Failed to update vehicle', null, null, 500);
+          });
         }
-        // return response(req, res, 'No data changed', null, null, 404);
+        return response(req, res, 'No data changed on vehicle', null, null, 400);
       }
       return response(req, res, 'Vehicle not available', null, null, 404);
     });
@@ -206,7 +206,7 @@ const deleteVehicle = (req, res) => {
           deleteImg.rm(vehicleDeleted);
           return response(req, res, `Vehicle with id ${id} successfully deleted`, vehicleDeleted[0], null);
         }
-        return response(req, res, `Failed to delete vehicle with id ${id}`, null, null, 400);
+        return response(req, res, `Failed to delete vehicle with id ${id}`, null, null, 500);
       });
     });
   }
