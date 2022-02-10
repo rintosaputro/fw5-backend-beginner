@@ -65,6 +65,9 @@ const addVehicle = (req, res) => {
       if (req.file) {
         image = req.file.path;
       }
+      if (image === undefined) {
+        return response(req, res, 'Image not selected', null, null, 400);
+      }
       if (id_category && brand && capacity && location && price && qty) {
         return categoriesModel.getCategory(id_category, (checkType) => {
           if (checkType.length > 0) {
@@ -111,7 +114,9 @@ const editAllVehicle = (req, res) => {
       if (req.file) {
         image = req.file.path;
       }
-
+      if (image === undefined) {
+        return response(req, res, 'Image not selected', null, null, 400);
+      }
       if (id_category && brand && capacity && location && price && qty && rent_count) {
         return categoriesModel.getCategory(id_category, (checkType) => {
           if (checkType.length > 0) {
