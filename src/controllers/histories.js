@@ -7,6 +7,7 @@ const userModel = require('../models/users');
 const helperGet = require('../helpers/get');
 const checkDate = require('../helpers/checkDate');
 const response = require('../helpers/response');
+const checkStartEnd = require('../helpers/checkStratEnd');
 
 const getHistories = (req, res) => {
   helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
@@ -28,6 +29,9 @@ const addHistory = (req, res) => {
   } = req.body;
 
   if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
+    if (!checkStartEnd(rent_start_date, rent_end_date)) {
+      return response(req, res, 'rent start must be greater than rent end', null, null, 400);
+    }
     return userModel.getUser(id_user, (user) => {
       if (user.length > 0) {
         return vehicleModel.getVehicle(id_vehicle, (vehicle) => {
@@ -64,6 +68,9 @@ const editHistory = (req, res) => {
     } = req.body;
 
     if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment && status) {
+      if (!checkStartEnd(rent_start_date, rent_end_date)) {
+        return response(req, res, 'rent start must be greater than rent end', null, null, 400);
+      }
       return userModel.getUser(id_user, (user) => {
         if (user.length > 0) {
           return vehicleModel.getVehicle(id_vehicle, (vehicle) => {

@@ -141,54 +141,55 @@ const editAllVehicle = (req, res) => {
   });
 };
 
-const editVehicle = () => {
-  // upload(req, res, (err) => {
-  //   if (err) {
-  //     return response(req, res, err.message, null, null, 400);
-  //   }
-  //   const { id } = req.params;
-  //   return vehicleModel.getVehicle(id, (vehicle) => {
-  //     if (vehicle.length > 0) {
-  //       const data = {};
-  //       const input = ['id_category', 'brand', 'capacity', 'location', 'price', 'qty', 'rent_count'];
-  //       input.forEach((item) => {
-  //         if (req.body[item] && req.body[item] !== undefined) {
-  //           data[item] = req.body[item];
-  //         }
-  //       });
-  //       if (req.file) {
-  //         data.image = req.file.path;
-  //       }
-  //       console.log(Object.values(data));
-  //       if (data.price || data.qty || data.rent_count) {
-  //         const pola = /\D/g;
-  //         if (pola.test(data.price)) {
-  //           return response(req, res, 'price must be number', null, null, 404);
-  //         }
-  //         if (pola.test(data.qty)) {
-  //           return response(req, res, 'qty must be number', null, null, 404);
-  //         }
-  //         if (pola.test(data.rent_count)) {
-  //           return response(req, res, 'rent_count must be number', null, null, 404);
-  //         }
-  //       }
-  //       if (data) {
-  //         // return vehicleModel.editAllVehicle(data, id, (results) => {
-  //         //   if (results.affectedRows > 0) {
-  //         // eslint-disable-next-line max-len
-  //         //     return vehicleModel.getVehicle(id, (edited) => response(req, res, 'Data vehicle', edited, null));
-  //         //   }
-  //         //   return response(req, res, 'Failed to update vehicle', null, null, 500);
-  //         // });
-  //         console.log('ok');
-  //       } else {
-  //         console.log('kosong');
-  //       }
-  //       // return response(req, res, 'No data changed', null, null, 404);
-  //     }
-  //     return response(req, res, 'Vehicle not available', null, null, 404);
-  //   });
-  // });
+const editVehicle = (req, res) => {
+  upload(req, res, (err) => {
+    if (err) {
+      return response(req, res, err.message, null, null, 400);
+    }
+    const { id } = req.params;
+    return vehicleModel.getVehicle(id, (vehicle) => {
+      if (vehicle.length > 0) {
+        const data = {};
+        const input = ['id_category', 'brand', 'capacity', 'location', 'price', 'qty', 'rent_count'];
+        input.forEach((item) => {
+          if (req.body[item] && req.body[item] !== undefined) {
+            data[item] = req.body[item];
+          }
+        });
+        if (req.file) {
+          data.image = req.file.path;
+        }
+        console.log(Object.values(data));
+        const pola = /\D/g;
+        if (data.price && pola.test(data.price)) {
+          return response(req, res, 'price must be number', null, null, 404);
+        }
+        if (data.qty && pola.test(data.qty)) {
+          return response(req, res, 'qty must be number', null, null, 404);
+        }
+        if (data.rent_count && pola.test(data.rent_count)) {
+          return response(req, res, 'rent_count must be number', null, null, 404);
+        }
+        // if (data.price || data.qty || data.rent_count) {
+
+        // }
+        if (data) {
+          // return vehicleModel.editAllVehicle(data, id, (results) => {
+          //   if (results.affectedRows > 0) {
+          // eslint-disable-next-line max-len
+          //     return vehicleModel.getVehicle(id, (edited) => response(req, res, 'Data vehicle', edited, null));
+          //   }
+          //   return response(req, res, 'Failed to update vehicle', null, null, 500);
+          // });
+          console.log('ok');
+        } else {
+          console.log('kosong');
+        }
+        // return response(req, res, 'No data changed', null, null, 404);
+      }
+      return response(req, res, 'Vehicle not available', null, null, 404);
+    });
+  });
 };
 
 const deleteVehicle = (req, res) => {
