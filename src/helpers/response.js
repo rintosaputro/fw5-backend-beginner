@@ -1,7 +1,14 @@
-const response = (res, message, results, pageInfo, stats = 200) => {
+const fs = require('fs');
+
+const response = (req, res, message, results, pageInfo, stats = 200) => {
   let success = true;
   if (stats >= 400) {
     success = false;
+    if (req.file) {
+      fs.unlink(`${req.file.path}`, (error) => {
+        if (error) throw error;
+      });
+    }
   }
   const data = {
     success,

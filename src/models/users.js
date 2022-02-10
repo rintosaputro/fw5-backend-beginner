@@ -57,6 +57,13 @@ const deleteUser = (id, cb) => {
   });
 };
 
+const getUserByUserName = (username) => new Promise((resolve, reject) => {
+  db.query(`SELECT id_user, display_name, password FROM users WHERE display_name='${username}'`, [username], (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
+
 module.exports = {
   countUsers,
   getUsers,
@@ -66,4 +73,5 @@ module.exports = {
   addUser,
   editUser,
   deleteUser,
+  getUserByUserName,
 };
