@@ -11,12 +11,12 @@ const {
 } = require('../controllers/vehicles');
 const { verifyUser } = require('../helpers/auth');
 
-vehicles.get('/', verifyUser, getVehicles);
-vehicles.post('/', addVehicle);
+vehicles.get('/', getVehicles);
+vehicles.post('/', verifyUser, addVehicle);
 vehicles.get('/category', getVehicleCategory);
-vehicles.get('/:id', verifyUser, getVehicle);
-vehicles.put('/:id', editAllVehicle);
-vehicles.patch('/:id', editVehicle);
-vehicles.delete('/:id', deleteVehicle);
+vehicles.get('/:id', getVehicle);
+vehicles.put('/:id', verifyUser, editAllVehicle);
+vehicles.patch('/:id', verifyUser, editVehicle);
+vehicles.delete('/:id', verifyUser, deleteVehicle);
 
 module.exports = vehicles;

@@ -11,7 +11,9 @@ exports.verifyUser = (req, res, next) => {
     const token = auth.split(' ')[1];
     if (token) {
       try {
-        if (jwt.verify(token, APP_SECRET)) {
+        const payload = jwt.verify(token, APP_SECRET);
+        req.user = payload;
+        if (payload) {
           // return response(req, res, 'User verified');
           return next();
         }

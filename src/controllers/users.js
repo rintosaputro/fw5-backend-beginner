@@ -15,16 +15,9 @@ const getUser = (req, res) => {
   const { id } = req.params;
   userModel.getUser(id, (results) => {
     if (results.length > 0) {
-      return res.json({
-        success: true,
-        message: `User with id ${id}`,
-        results: results[0],
-      });
+      return response(req, res, `User with id ${id}`, results[0]);
     }
-    return res.status(404).json({
-      success: false,
-      message: `User with id ${id} not found`,
-    });
+    return response(req, res, `User with id ${id} not found`, null, null, 404);
   });
 };
 
@@ -81,37 +74,18 @@ const editUser = (req, res) => {
           };
           return userModel.editUser(data, id, (results) => {
             if (results.changedRows > 0) {
-              return userModel.getUser(id, (rslt) => res.json({
-                success: true,
-                message: 'Successfully updated user',
-                results: rslt[0],
-              }));
+              return userModel.getUser(id, (rslt) => response(req, res, 'Successfully updated user', rslt[0]));
             }
-            return res.status(400).json({
-              success: false,
-              message: 'Failed to update user. Data hasnt changed.',
-            });
+            return response(req, res, 'Failed to update user. Data hasnt changed.', null, null, 400);
           });
         }
-        return res.status(400).json({
-          success: false,
-          message: 'Wrong birthdate input. Format birthdate YYYY-MM-DD',
-        });
+        return response(req, res, 'Wrong birthdate input. Format birthdate YYYY-MM-DD', null, null, 400);
       }
-      return res.status(400).json({
-        success: false,
-        message: 'Wrong email input',
-      });
+      return response(req, res, 'Wrong email input', null, null, 400);
     }
-    return res.status(400).json({
-      success: false,
-      message: 'Wrong phone_number input',
-    });
+    return response(req, res, 'Wrong phone number input', null, null, 400);
   }
-  return res.status(400).json({
-    success: false,
-    message: `Failed to edit user with id ${id}. Some data is empty.`,
-  });
+  return response(req, res, `Failed to edit user with id ${id}. Some data is empty.`, null, null, 400);
 };
 
 const deleteUser = (req, res) => {
@@ -119,16 +93,9 @@ const deleteUser = (req, res) => {
   userModel.getUser(id, (rslt) => {
     userModel.deleteUser(id, (results) => {
       if (results.affectedRows > 0) {
-        return res.json({
-          success: true,
-          message: `User with id ${id} successfully deleted`,
-          results: rslt[0],
-        });
+        return response(req, res, `User with id ${id} successfully deleted`, rslt[0]);
       }
-      return res.status(400).json({
-        success: false,
-        message: `Failed to delete user with id ${id}`,
-      });
+      return response(req, res, `Failed to delete user with id ${id}`, null, null, 400);
     });
   });
 };

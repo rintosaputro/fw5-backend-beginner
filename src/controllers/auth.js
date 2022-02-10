@@ -13,7 +13,11 @@ exports.login = async (req, res) => {
     const hash = result[0].password;
     const validatePwd = await bcrypt.compare(password, hash);
     if (validatePwd) {
-      const token = jwt.sign({ id: result[0].id_user }, APP_SECRET);
+      const data = { id: result[0].id_user };
+      if (username === 'Admin') {
+        data.role = 'Admin';
+      }
+      const token = jwt.sign(data, APP_SECRET);
       return response(req, res, 'Login success', { token });
     }
     return response(req, res, 'Wrong password', null, null, 403);

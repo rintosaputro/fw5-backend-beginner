@@ -1,4 +1,5 @@
 const fs = require('fs');
+const camelCase = require('camelcase-keys');
 
 const response = (req, res, message, results, pageInfo, stats = 200) => {
   let success = true;
@@ -15,7 +16,7 @@ const response = (req, res, message, results, pageInfo, stats = 200) => {
     message,
   };
   if (results) {
-    data.results = results;
+    data.results = camelCase(results);
   }
   if (pageInfo) {
     data.pageInfo = pageInfo;
