@@ -47,6 +47,14 @@ const getVehicle = (id, cb) => {
   });
 };
 
+const getVehicleAsync = (id) => new Promise((resolve, reject) => {
+  db.query(`SELECT id_vehicle, id_category, type, brand , CONCAT('${APP_URL}/', image) AS image, capacity, location, price, qty, rent_count, status, createdAt, updatedAt
+  FROM vehicles WHERE id_vehicle=?`, [id], (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
+
 const checkVehicle = (data, cb) => {
   db.query(`SELECT * FROM vehicles WHERE type='${data.type}' AND brand='${data.brand}' AND capacity='${data.capacity}' 
   AND location='${data.location}' AND price=${data.price} AND qty=${data.qty}`, (err, res) => {
@@ -69,12 +77,19 @@ const addVehicle = (data, cb) => {
   });
 };
 
-const editVehicle = (data, id, cb) => {
+const editAllVehicle = (data, id, cb) => {
   db.query('UPDATE vehicles SET ? WHERE id_vehicle=?;', [data, id], (err, res) => {
     if (err) throw err;
     cb(res);
   });
 };
+
+const editVehicle = (data, id) => new Promise((resolve, reject) => {
+  db.query('UPDATE vehicles SET ? WHERE id_vehicle=?', [data, id], (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
 
 const deleteVehicle = (id, cb) => {
   db.query('DELETE FROM vehicles WHERE id_vehicle=?', [id], (err, res) => {
@@ -93,9 +108,11 @@ module.exports = {
   countVehicleCategory,
   getVehicleCategory,
   getVehicle,
+  getVehicleAsync,
   checkVehicle,
   newVehicle,
   addVehicle,
+  editAllVehicle,
   editVehicle,
   deleteVehicle,
   addRentCount,

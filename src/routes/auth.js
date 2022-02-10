@@ -1,7 +1,8 @@
-const userLogin = require('express').Router();
+const user = require('express').Router();
 
-const { login } = require('../controllers/auth');
+const { login, verify } = require('../controllers/auth');
 
-userLogin.post('/login', login);
+user.post('/login', login);
+user.post('/verify', verify);
 
-module.exports = userLogin;
+module.exports = user;

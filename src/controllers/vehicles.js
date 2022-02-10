@@ -1,13 +1,12 @@
 /* eslint-disable prefer-const */
 /* eslint-disable camelcase */
-const fs = require('fs');
 const camelCase = require('camelcase-keys');
 const vehicleModel = require('../models/vehicles');
 const helperGet = require('../helpers/get');
 const categoriesModel = require('../models/categories');
 const upload = require('../helpers/upload').single('image');
-const deleteImg = require('../helpers/deleteImg');
 const response = require('../helpers/response');
+const deleteImg = require('../helpers/deleteImg');
 
 const getVehicles = (req, res) => {
   helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
@@ -36,10 +35,10 @@ const getVehicleCategory = (req, res) => {
           lastPage: last,
         };
 
-        return response(res, `List vehicles by category ${category}`, results, pageInfo);
+        return response(req, res, `List vehicles by category ${category}`, results, pageInfo);
       });
     }
-    return response(res, 'Page not found', null, null, 404);
+    return response(req, res, 'Page not found', null, null, 404);
   });
 };
 
@@ -47,16 +46,16 @@ const getVehicle = (req, res) => {
   const { id } = req.params;
   vehicleModel.getVehicle(id, (results) => {
     if (results.length > 0) {
-      return response(res, 'Detail Vehicle', camelCase(results[0]), null);
+      return response(req, res, 'Detail Vehicle', camelCase(results[0]), null);
     }
-    return response(res, `Vehicle not found with id ${id}`, null, null, 404);
+    return response(req, res, `Vehicle not found with id ${id}`, null, null, 404);
   });
 };
 
 const addVehicle = (req, res) => {
   upload(req, res, (err) => {
     if (err) {
-      return response(res, err.message, null, null, 400);
+      return response(req, res, err.message, null, null, 400);
     }
     const {
       id_category, brand, capacity, location, price, qty,
@@ -68,7 +67,7 @@ const addVehicle = (req, res) => {
     if (id_category && brand && capacity && location && price && qty) {
       return categoriesModel.getCategory(id_category, (checkType) => {
         if (checkType.length > 0) {
-          const regex = /\D/g; // Mencari karakter selain angka
+          const regex = /\D/g;
           if (!regex.test(price) && !regex.test(qty)) {
             const typeCategory = checkType[0].type;
             const data = {
@@ -76,27 +75,23 @@ const addVehicle = (req, res) => {
             };
             return vehicleModel.checkVehicle(data, (checkResult) => {
               if (checkResult.length > 0) {
-                deleteImg(req);
-                return response(res, 'Failed to add new vehicle. Data already exists', null, null, 400);
+                return response(req, res, 'Failed to add new vehicle. Data already exists', null, null, 400);
               }
               return vehicleModel.addVehicle(data, (addRes) => {
-                vehicleModel.getVehicle(addRes.insertId, (results) => response(res, 'Successfully added new vehicle', camelCase(results[0])));
+                vehicleModel.getVehicle(addRes.insertId, (results) => response(req, res, 'Successfully added new vehicle', camelCase(results[0])));
               });
             });
           }
-          deleteImg(req);
-          return response(res, 'Price and qty must be number', null, null, 400);
+          return response(req, res, 'Price and qty must be number', null, null, 400);
         }
-        deleteImg(req);
-        return response(res, 'id_category not available', null, null, 400);
+        return response(req, res, 'id_category not available', null, null, 400);
       });
     }
-    deleteImg(req);
-    return response(res, 'Failed to add new vehicle, data must be filled', null, null, 400);
+    return response(req, res, 'Failed to add new vehicle, data must be filled', null, null, 400);
   });
 };
 
-const editVehicle = (req, res) => {
+const editAllVehicle = (req, res) => {
   const { id } = req.params;
   const {
     id_category, brand, capacity, location, price, qty, rent_count,
@@ -111,19 +106,69 @@ const editVehicle = (req, res) => {
           const dataBody = {
             id_category, type: typeCategory, brand, capacity, location, price, qty, rent_count,
           };
-          return vehicleModel.editVehicle(dataBody, id, (results) => {
+          return vehicleModel.editAllVehicle(dataBody, id, (results) => {
             if (results.changedRows > 0) {
-              return vehicleModel.getVehicle(id, (vehicle) => response(res, 'Edited Succesfully', camelCase(vehicle[0]), null));
+              return vehicleModel.getVehicle(id, (vehicle) => response(req, res, 'Edited Succesfully', camelCase(vehicle[0]), null));
             }
-            return response(res, `Failed to edit vehicle with id ${id}. Data hasnt changed`, null, null, 400);
+            return response(req, res, `Failed to edit vehicle with id ${id}. Data hasnt changed`, null, null, 400);
           });
         }
-        return response(res, 'Price, qty and rent_count must be number', null, null, 400);
+        return response(req, res, 'Price, qty and rent_count must be number', null, null, 400);
       }
-      return response(res, 'id category not available', null, null, 400);
+      return response(req, res, 'id category not available', null, null, 400);
     });
   }
-  return response(res, `Failed to edit vehicle with id ${id}. Some data is empty.`, null, null, 400);
+  return response(req, res, `Failed to edit vehicle with id ${id}. Some data is empty.`, null, null, 400);
+};
+
+const editVehicle = (req, res) => {
+  upload(req, res, (err) => {
+    if (err) {
+      return response(req, res, err.message, null, null, 400);
+    }
+    const { id } = req.params;
+    return vehicleModel.getVehicle(id, (vehicle) => {
+      if (vehicle.length > 0) {
+        const data = {};
+        const input = ['id_category', 'brand', 'capacity', 'location', 'price', 'qty', 'rent_count'];
+        input.forEach((item) => {
+          if (req.body[item] && req.body[item] !== undefined) {
+            data[item] = req.body[item];
+          }
+        });
+        if (req.file) {
+          data.image = req.file.path;
+        }
+        console.log(Object.values(data));
+        if (data.price || data.qty || data.rent_count) {
+          const pola = /\D/g;
+          if (pola.test(data.price)) {
+            return response(req, res, 'price must be number', null, null, 404);
+          }
+          if (pola.test(data.qty)) {
+            return response(req, res, 'qty must be number', null, null, 404);
+          }
+          if (pola.test(data.rent_count)) {
+            return response(req, res, 'rent_count must be number', null, null, 404);
+          }
+        }
+        if (data) {
+          // return vehicleModel.editAllVehicle(data, id, (results) => {
+          //   if (results.affectedRows > 0) {
+          // eslint-disable-next-line max-len
+          //     return vehicleModel.getVehicle(id, (edited) => response(req, res, 'Data vehicle', edited, null));
+          //   }
+          //   return response(req, res, 'Failed to update vehicle', null, null, 500);
+          // });
+          console.log('ok');
+        } else {
+          console.log('kosong');
+        }
+        // return response(req, res, 'No data changed', null, null, 404);
+      }
+      return response(req, res, 'Vehicle not available', null, null, 404);
+    });
+  });
 };
 
 const deleteVehicle = (req, res) => {
@@ -131,16 +176,10 @@ const deleteVehicle = (req, res) => {
   vehicleModel.getVehicle(id, (vehicleDeleted) => {
     vehicleModel.deleteVehicle(id, (results) => {
       if (results.affectedRows > 0) {
-        if (vehicleDeleted[0].image !== null) {
-          const arrImage = vehicleDeleted[0].image.split('/');
-          const fileImage = arrImage[arrImage.length - 1];
-          return fs.rm(fileImage, {}, (err) => {
-            if (err) throw err;
-            return response(res, `Vehicle with id ${id} successfully deleted`, camelCase(vehicleDeleted[0]), null);
-          });
-        }
+        deleteImg.rm(vehicleDeleted);
+        return response(req, res, `Vehicle with id ${id} successfully deleted`, camelCase(vehicleDeleted[0]), null);
       }
-      return response(res, `Failed to delete vehicle with id ${id}`, null, null, 400);
+      return response(req, res, `Failed to delete vehicle with id ${id}`, null, null, 400);
     });
   });
 };
@@ -150,6 +189,7 @@ module.exports = {
   getVehicleCategory,
   getVehicle,
   addVehicle,
+  editAllVehicle,
   editVehicle,
   deleteVehicle,
 };
