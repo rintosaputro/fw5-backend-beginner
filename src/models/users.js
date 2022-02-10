@@ -22,8 +22,8 @@ const getUser = (id, cb) => {
 };
 
 const checkUser = (data, cb) => {
-  db.query(`SELECT * FROM users WHERE name='${data.name}' AND display_name='${data.display_name}' AND email='${data.email}' 
-  AND phone_number='${data.phone_number}' AND address='${data.address}' AND birthdate='${data.birthdate}'`, (err, res) => {
+  db.query(`SELECT * FROM users WHERE display_name='${data.display_name}' OR email='${data.email}' 
+  OR phone_number='${data.phone_number}'`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
