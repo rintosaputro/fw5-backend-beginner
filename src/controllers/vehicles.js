@@ -43,14 +43,13 @@ const getVehicleCategory = (req, res) => {
   });
 };
 
-const getVehicle = (req, res) => {
+const getVehicle = async (req, res) => {
   const { id } = req.params;
-  vehicleModel.getVehicle(id, (results) => {
-    if (results.length > 0) {
-      return response(req, res, 'Detail Vehicle', results[0], null);
-    }
-    return response(req, res, `Vehicle not found with id ${id}`, null, null, 404);
-  });
+  const results = await vehicleModel.getVehicleAsync(id);
+  if (results.length > 0) {
+    return response(req, res, 'Detail Vehicle', results[0], null);
+  }
+  return response(req, res, `Vehicle not found with id ${id}`, null, null, 404);
 };
 
 const addVehicle = (req, res) => {
