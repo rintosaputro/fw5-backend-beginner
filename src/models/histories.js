@@ -12,7 +12,7 @@ const countHistory = (data, cb) => {
 };
 
 const getHistories = (data, cb) => {
-  db.query(`SELECT id_history, h.id_user, u.name, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle 
   WHERE v.type LIKE '${data.search}%' OR v.brand LIKE '${data.search}%' OR v.location LIKE '${data.search}%' OR u.name LIKE '${data.search}%'
   ORDER by h.id_history ASC
@@ -23,7 +23,7 @@ const getHistories = (data, cb) => {
 };
 
 const getHistory = (id, cb) => {
-  db.query(`SELECT id_history, h.id_user, u.name, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle  
   WHERE id_history=?`, [id], (err, res) => {
     if (err) throw err;
@@ -32,7 +32,7 @@ const getHistory = (id, cb) => {
 };
 
 const newHistory = (cb) => {
-  db.query(`SELECT id_history, h.id_user, u.name, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle 
   ORDER BY h.id_history DESC LIMIT 1`, (err, res) => {
     if (err) throw err;

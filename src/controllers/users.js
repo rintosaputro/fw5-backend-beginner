@@ -25,17 +25,17 @@ const getUser = (req, res) => {
 
 const addUser = (req, res) => {
   const {
-    name, display_name, email, password, phone_number,
+    name, username, email, password, phone_number,
   } = req.body;
-  if (name && display_name && email && password && phone_number) {
+  if (name && username && email && password && phone_number) {
     if (!checkEmail(email)) {
       return response(req, res, 'Wrong email input', null, null, 400);
     }
-    if (/\D/g.test(phone_number) || phone_number[0] !== '0' || phone_number[0] !== '+' || !phone_number.length < 15 || !phone_number.length >= 10) {
-      return response(req, res, 'Wrong phone_number input', null, null, 400);
+    if (/\D/g.test(phone_number) && (phone_number[0] !== '0' || phone_number[0] !== '+') && phone_number.length < 10 && phone_number.length > 14) {
+      return response(req, res, 'Wrong phone number input', null, null, 400);
     }
     const dataCheck = {
-      display_name, email, phone_number,
+      username, email, phone_number,
     };
     return userModel.checkUser(dataCheck, async (user) => {
       if (user.length > 0) {
@@ -44,7 +44,7 @@ const addUser = (req, res) => {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
       const data = {
-        name, display_name, email, password: hash, phone_number,
+        name, username, email, password: hash, phone_number,
       };
       return userModel.addUser(data, () => {
         userModel.newUser((results) => response(req, res, 'Successfully added new user', results[0]));
@@ -57,17 +57,16 @@ const addUser = (req, res) => {
 const editUser = (req, res) => {
   const { id } = req.params;
   const {
-    name, display_name, email, phone_number, address, birthdate,
+    name, username, email, phone_number, address, birthdate,
   } = req.body;
 
-  if (name && display_name && email && phone_number && address && birthdate) {
+  if (name && username && email && phone_number && address && birthdate) {
     const notNumber = /\D/g;
     if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+') && phone_number.length < 15 && phone_number.length >= 10) {
-      const polaEmail = /@/g;
-      if (polaEmail.test(email)) {
+      if (checkEmail(email)) {
         if (checkDate(birthdate)) {
           const data = {
-            name, display_name, email, phone_number, address, birthdate,
+            name, username, email, phone_number, address, birthdate,
           };
           return userModel.editUser(data, id, (results) => {
             if (results.changedRows > 0) {

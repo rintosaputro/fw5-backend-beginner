@@ -29,12 +29,20 @@ const getUserById = (id) => new Promise((resolve, reject) => {
 });
 
 const checkUser = (data, cb) => {
-  db.query(`SELECT * FROM users WHERE display_name='${data.display_name}' OR email='${data.email}' 
+  db.query(`SELECT * FROM users WHERE username='${data.username}' OR email='${data.email}' 
   OR phone_number='${data.phone_number}'`, (err, res) => {
     if (err) throw err;
     cb(res);
   });
 };
+
+// const checkUserById = (id, data, cb) => {
+//   db.query(`SELECT * FROM users WHERE username='${data.username}' OR email='${data.email}' 
+//   OR phone_number='${data.phone_number} WHERE id_user=${id}'`, (err, res) => {
+//     if (err) throw err;
+//     cb(res);
+//   });
+// };
 
 const newUser = (cb) => {
   db.query('SELECT * FROM users ORDER BY id_user DESC LIMIT 1', (err, res) => {
@@ -65,7 +73,7 @@ const deleteUser = (id, cb) => {
 };
 
 const getUserByUserName = (data) => new Promise((resolve, reject) => {
-  db.query(`SELECT id_user, display_name, password FROM users WHERE display_name='${data}' OR email='${data}'`, (err, res) => {
+  db.query(`SELECT id_user, username, password FROM users WHERE username='${data}' OR email='${data}'`, (err, res) => {
     if (err) reject(err);
     resolve(res);
   });
