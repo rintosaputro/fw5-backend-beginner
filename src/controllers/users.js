@@ -7,6 +7,7 @@ const helperGet = require('../helpers/get');
 const checkDate = require('../helpers/checkDate');
 const response = require('../helpers/response');
 const upload = require('../helpers/upload').single('image');
+const checkEmail = require('../helpers/checkEmail');
 
 const getUsers = (req, res) => {
   helperGet(req, res, userModel.getUsers, userModel.countUsers, 'users');
@@ -23,44 +24,34 @@ const getUser = (req, res) => {
 };
 
 const addUser = (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) {
-      return response(req, res, err.message, null, null, 400);
+  const {
+    name, display_name, email, password, phone_number,
+  } = req.body;
+  if (name && display_name && email && password && phone_number) {
+    if (!checkEmail(email)) {
+      return response(req, res, 'Wrong email input', null, null, 400);
     }
-    let {
-      name, display_name, gender, email, password, phone_number, address, birthdate,
-    } = req.body;
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-    if (Number(gender) >= 1 || Number(gender) <= 2) {
-      if (name && display_name && email && password && phone_number && address && birthdate) {
-        const notNumber = /\D/g;
-        if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+') && phone_number.length < 15 && phone_number.length >= 10) {
-          const polaEmail = /@/g;
-          if (polaEmail.test(email)) {
-            if (checkDate(birthdate)) {
-              const data = {
-                name, display_name, gender, email, password: hash, phone_number, address, birthdate,
-              };
-              return userModel.checkUser(data, (checkResult) => {
-                if (checkResult.length > 0) {
-                  return response(req, res, 'User name, phone or email already used', null, null, 400);
-                }
-                return userModel.addUser(data, () => {
-                  userModel.newUser((results) => response(req, res, 'Successfully added new user', results[0]));
-                });
-              });
-            }
-            return response(req, res, 'Wrong birthdate input. Format birthdate YYYY-MM-DD', null, null, 400);
-          }
-          return response(req, res, 'Wrong email input', null, null, 400);
-        }
-        return response(req, res, 'Wrong phone_number input', null, null, 400);
+    if (/\D/g.test(phone_number) || phone_number[0] !== '0' || phone_number[0] !== '+' || !phone_number.length < 15 || !phone_number.length >= 10) {
+      return response(req, res, 'Wrong phone_number input', null, null, 400);
+    }
+    const dataCheck = {
+      display_name, email, phone_number,
+    };
+    return userModel.checkUser(dataCheck, async (user) => {
+      if (user.length > 0) {
+        return response(req, res, 'User name or phone or email has been registered', null, null, 400);
       }
-      return response(req, res, 'Failed to add new user, data must be filled', null, null, 400);
-    }
-    return response(req, res, 'Gender unknown. 1 for male and 2 for female', null, null, 400);
-  });
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+      const data = {
+        name, display_name, email, password: hash, phone_number,
+      };
+      return userModel.addUser(data, () => {
+        userModel.newUser((results) => response(req, res, 'Successfully added new user', results[0]));
+      });
+    });
+  }
+  return response(req, res, 'Failed to create user, data must be filled', null, null, 400);
 };
 
 const editUser = (req, res) => {

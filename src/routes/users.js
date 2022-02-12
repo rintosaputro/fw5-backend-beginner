@@ -6,8 +6,8 @@ const {
 const { verifyUser } = require('../helpers/auth');
 
 users.get('/', getUsers);
+users.post('/registry', addUser);
 users.get('/:id', getUser);
-users.post('/', addUser);
 users.patch('/:id', verifyUser, editUser);
 users.delete('/:id', verifyUser, deleteUser);
 

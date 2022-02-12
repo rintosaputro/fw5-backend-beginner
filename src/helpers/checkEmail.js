@@ -1,12 +1,25 @@
-exports.checkEmail = (email) => {
-  let result = false;
-  const arrEmail = email.split('');
-  const notNum = /\D/;
+// exports.checkEmail = (email) => {
+//   let result = false;
+//   const arrEmail = email.split('');
 
-  if (notNum.test(arrEmail[0])) {
+//   if (/\D/.test(arrEmail[0])) {
+//     if (arrEmail.includes('@') && arrEmail.includes('.')) {
+//       result = true;
+//     }
+//   }
+//   return result;
+// };
+
+const checkEmail = (mail) => {
+  let result = false;
+  const arrEmail = mail.split('');
+
+  if (/\D/.test(arrEmail[0])) {
     if (arrEmail.includes('@') && arrEmail.includes('.')) {
       result = true;
     }
   }
   return result;
 };
+
+module.exports = checkEmail;
