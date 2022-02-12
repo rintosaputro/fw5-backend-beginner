@@ -3,10 +3,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const response = require('../helpers/response');
 const userModel = require('../models/users');
+const forgotModel = require('../models/forgotRequest');
 
 const { APP_SECRET } = process.env;
 
-exports.login = async (req, res) => {
+const login = async (req, res) => {
   const { username, password } = req.body;
   const result = await userModel.getUserByUserName(username);
   if (result.length > 0) {
@@ -25,7 +26,7 @@ exports.login = async (req, res) => {
   return response(req, res, 'Wrong username', null, null, 403);
 };
 
-exports.verify = (req, res) => {
+const verify = (req, res) => {
   const auth = req.headers.authorization;
   if (auth.startsWith('Bearer')) {
     const token = auth.split(' ')[1];
@@ -41,4 +42,121 @@ exports.verify = (req, res) => {
     }
     return response(req, res, 'Token must be provided', null, null, 403);
   }
+};
+
+const forgotRequest = async (req, res) => {
+  const {
+    email, code, password, confirmPassword,
+  } = req.body;
+
+  if (email && !code && !password && !confirmPassword) {
+    const user = await userModel.getUserByUserName(email);
+    if (user.length === 1) {
+      const checkUser = await userModel.getUserByUserName(email);
+      if (checkUser.length > 0) {
+        const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
+        const request = await forgotModel.createRequest(checkUser[0].id_user, randomCode);
+        if (request.affectedRows > 0) {
+          setTimeout(async () => {
+            await forgotModel.updateExpired(request.insertId);
+          }, 60000);
+          return response(req, res, `Forgot password request has been sent to ${email}`);
+        }
+        return response(req, res, 'Unexpected error', null, null, 500);
+      }
+      return response(req, res, 'Your email is not registered', null, null, 400);
+    }
+    return response(req, res, 'Your email is not registered', null, null, 400);
+  }
+
+  if (email && code && password && confirmPassword) {
+    if (!/\D/g.test(code)) {
+      const result = await forgotModel.getRequest(code);
+      if (result.length === 1) {
+        if (result[0].expired === 'false') {
+          return response(req, res, 'Verification code has expired', null, null, 400);
+        }
+        const idUser = result[0].id_user;
+        const user = await userModel.getUserById(idUser);
+        if (user[0].email === email) {
+          if (password) {
+            if (password === confirmPassword) {
+              const salt = await bcrypt.genSalt(10);
+              const hash = await bcrypt.hash(password, salt);
+              return userModel.editUser({ password: hash }, idUser, (resfin) => {
+                if (resfin.affectedRows > 0) {
+                  return response(req, res, 'Password successfully reset');
+                }
+                return response(req, res, 'Unexpected error', null, null, 500);
+              });
+            }
+            return response(req, res, 'Confirm password is not same as password', null, null, 400);
+          }
+          return response(req, res, 'Password cannot be empty');
+        }
+        return response(req, res, 'Invalid Email', null, null, 400);
+      }
+    }
+    return response(req, res, 'Invalid code', null, null, 400);
+  }
+  return response(req, res, 'You have to provide confirmation data', null, null, 400);
+
+  // if (email) {
+  //   if (!code) {
+  //     const checkUser = await userModel.getUserByUserName(email);
+  //     if (checkUser.length > 0) {
+  //       const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
+  //       const request = await forgotModel.createRequest(checkUser[0].id_user, randomCode);
+  //       if (request.affectedRows > 0) {
+  //         return response(req, res, `Forgot password request has been sent to ${email}`);
+  //       }
+  //       return response(req, res, 'Unexpected error', null, null, 500);
+  //     }
+  //     return response(req, res, 'Your email is not registered', null, null, 400);
+  //   }
+
+  //   const result = await forgotModel.getRequest(code);
+  //   if (result.length === 1) {
+  //     const idUser = result[0].id_user;
+  //     const user = await userModel.getUserById(idUser);
+  //     if (user[0].email === email) {
+  //       if (password) {
+  //         console.log(password + confirmPassword);
+  //         if (password === confirmPassword) {
+  //           const salt = await bcrypt.genSalt(10);
+  //           const hash = await bcrypt.hash(password, salt);
+  //           return userModel.editUser({ password: hash }, idUser, (resfin) => {
+  //             if (resfin.affectedRows > 0) {
+  //               return response(req, res, 'Password successfully reset');
+  //             }
+  //             return response(req, res, 'Unexpected error', null, null, 500);
+  //           });
+  //         }
+  //         return response(req, res, 'Confirm password is not same as password', null, null, 400);
+  //       }
+  //       return response(req, res, 'Password cannot be empty');
+  //     }
+  //     return response(req, res, 'Invalid Email', null, null, 400);
+  //   }
+  //   return response(req, res, 'Invalid code', null, null, 400);
+  // }
+  // return response(req, res, 'You have to provide confirmation data', null, null, 400);
+  // if (result.length === 0) {
+  //   return response(req, res, 'Invalid code', null, null, 400);
+  // }
+  // const idUser = result[0].id_user;
+  // const user = await userModel.getUserById(idUser);
+  // if (!user[0].email === email) {
+  //   return response(req, res, 'Invalid Email', null, null, 400);
+  // }
+  // if (!password) {
+  //   return response(req, res, 'Password cannot be empty');
+  // }
+  // // return response(req, res, 'Password successfully reset');
+};
+
+module.exports = {
+  login,
+  verify,
+  forgotRequest,
 };

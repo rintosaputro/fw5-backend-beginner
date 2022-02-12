@@ -21,6 +21,13 @@ const getUser = (id, cb) => {
   });
 };
 
+const getUserById = (id) => new Promise((resolve, reject) => {
+  db.query('SELECT * FROM users WHERE id_user = ?', [id], (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
+
 const checkUser = (data, cb) => {
   db.query(`SELECT * FROM users WHERE display_name='${data.display_name}' OR email='${data.email}' 
   OR phone_number='${data.phone_number}'`, (err, res) => {
@@ -57,8 +64,8 @@ const deleteUser = (id, cb) => {
   });
 };
 
-const getUserByUserName = (username) => new Promise((resolve, reject) => {
-  db.query(`SELECT id_user, display_name, password FROM users WHERE display_name='${username}'`, [username], (err, res) => {
+const getUserByUserName = (data) => new Promise((resolve, reject) => {
+  db.query(`SELECT id_user, display_name, password FROM users WHERE display_name='${data}' OR email='${data}'`, (err, res) => {
     if (err) reject(err);
     resolve(res);
   });
@@ -68,6 +75,7 @@ module.exports = {
   countUsers,
   getUsers,
   getUser,
+  getUserById,
   checkUser,
   newUser,
   addUser,
