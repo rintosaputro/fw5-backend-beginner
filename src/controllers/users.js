@@ -49,7 +49,7 @@ const addUser = (req, res) => {
       mail.sendMail({
         from: APP_EMAIL,
         to: email,
-        subject: 'Verification code | Backend Beginner',
+        subject: 'Registration verification code | Rent Vehicles',
         text: String(randomCode),
         html: `<b>${randomCode}<b>`,
       });
@@ -59,7 +59,10 @@ const addUser = (req, res) => {
         name, username, email, password: hash, phone_number, confirm: randomCode,
       };
       return userModel.addUser(data, (rslt) => {
-        userModel.newUser(rslt.insertId, (results) => response(req, res, `Code verification send to ${email}`, results[0]));
+        if (rslt.affectedRows === 0) {
+          return response(req, res, 'Unexpected error', null, null, 500);
+        }
+        userModel.newUser(rslt.insertId, (results) => response(req, res, `Verification code has been sent to ${email}`, results[0]));
       });
     });
   }

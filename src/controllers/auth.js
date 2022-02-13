@@ -58,23 +58,19 @@ const forgotRequest = async (req, res) => {
   if (email && !code && !password && !confirmPassword) {
     const user = await userModel.getUserByUserName(email);
     if (user.length === 1) {
-      const checkUser = await userModel.getUserByUserName(email);
-      if (checkUser.length > 0) {
-        const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
-        const request = await forgotModel.createRequest(checkUser[0].id_user, randomCode);
-        if (request.affectedRows > 0) {
-          mail.sendMail({
-            from: APP_EMAIL,
-            to: email,
-            subject: 'Your verification code for reset password | Backend Beginner',
-            text: String(randomCode),
-            html: `<b>${randomCode}<b>`,
-          });
-          return response(req, res, `Forgot password request has been sent to ${email}`);
-        }
-        return response(req, res, 'Unexpected error', null, null, 500);
+      const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
+      const request = await forgotModel.createRequest(user[0].id_user, randomCode);
+      if (request.affectedRows > 0) {
+        mail.sendMail({
+          from: APP_EMAIL,
+          to: email,
+          subject: 'Your verification code for reset password | Rent Vehicles',
+          text: String(randomCode),
+          html: `<b>${randomCode}<b>`,
+        });
+        return response(req, res, `Forgot password request has been sent to ${email}`);
       }
-      return response(req, res, 'Your email is not registered', null, null, 400);
+      return response(req, res, 'Unexpected error', null, null, 500);
     }
     return response(req, res, 'Your email is not registered', null, null, 400);
   }
@@ -124,8 +120,11 @@ const confirmRegistration = async (req, res) => {
         const hash = user[0].password;
         const validatePwd = await bcrypt.compare(password, hash);
         if (validatePwd) {
-          await userModel.editUserByUserName(username);
-          return response(req, res, 'Confirm successfully');
+          const results = await userModel.editUserByUserName(username);
+          if (results.affectedRows > 0) {
+            return response(req, res, 'Confirm successfully');
+          }
+          return response(req, res, 'Unexpected Error', null, null, 500);
         }
         return response(req, res, 'Wrong password', null, null, 403);
       }
