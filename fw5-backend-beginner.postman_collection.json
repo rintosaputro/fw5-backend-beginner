@@ -32,7 +32,7 @@
 							"query": [
 								{
 									"key": "search",
-									"value": "rinto",
+									"value": "acvg",
 									"disabled": true
 								},
 								{
@@ -42,7 +42,7 @@
 								},
 								{
 									"key": "limit",
-									"value": "100",
+									"value": "a",
 									"disabled": true
 								}
 							]
@@ -84,27 +84,27 @@
 							"urlencoded": [
 								{
 									"key": "id_user",
-									"value": "34",
+									"value": "1",
 									"type": "text"
 								},
 								{
 									"key": "id_vehicle",
-									"value": "69",
+									"value": "10",
 									"type": "text"
 								},
 								{
 									"key": "rent_start_date",
-									"value": "2022-02-02",
-									"type": "text"
-								},
-								{
-									"key": "rent_end_date",
 									"value": "2022-02-05",
 									"type": "text"
 								},
 								{
+									"key": "rent_end_date",
+									"value": "2022-02-09",
+									"type": "text"
+								},
+								{
 									"key": "prepayment",
-									"value": "500000",
+									"value": "100000",
 									"type": "text"
 								}
 							]
@@ -125,6 +125,68 @@
 					"name": "EDIT HISTORY",
 					"request": {
 						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id_user",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "id_vehicle",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "rent_start_date",
+									"value": "2022-02-04",
+									"type": "text"
+								},
+								{
+									"key": "rent_end_date",
+									"value": "2022-02-03",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "prepayment",
+									"value": "800000",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/histories/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"histories",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "14"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDIT ALL HISTORY",
+					"request": {
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
@@ -156,7 +218,7 @@
 								},
 								{
 									"key": "status",
-									"value": "has been returned",
+									"value": "1",
 									"type": "text"
 								}
 							]
@@ -197,191 +259,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "31"
-								}
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "USERS",
-			"item": [
-				{
-					"name": "READ USERS",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/users/?limit=100",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								""
-							],
-							"query": [
-								{
-									"key": "search",
-									"value": "rinto",
-									"disabled": true
-								},
-								{
-									"key": "page",
-									"value": "2",
-									"disabled": true
-								},
-								{
-									"key": "limit",
-									"value": "100"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ADD USER",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "name",
-									"value": "Phil Jones",
-									"type": "text"
-								},
-								{
-									"key": "display_name",
-									"value": "Jones",
-									"type": "text"
-								},
-								{
-									"key": "gender",
-									"value": "male",
-									"type": "text"
-								},
-								{
-									"key": "email",
-									"value": "philjones@gmail.com",
-									"type": "text"
-								},
-								{
-									"key": "phone_number",
-									"value": "08454624",
-									"type": "text"
-								},
-								{
-									"key": "address",
-									"value": "Sidoarjo, East Java",
-									"type": "text"
-								},
-								{
-									"key": "birthdate",
-									"value": "1995-02-28",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{baseUrl}}/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "EDIT USER",
-					"request": {
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "name",
-									"value": "Ngolo Kante",
-									"type": "text"
-								},
-								{
-									"key": "display_name",
-									"value": "Kante",
-									"type": "text"
-								},
-								{
-									"key": "gender",
-									"value": "male",
-									"type": "text"
-								},
-								{
-									"key": "email",
-									"value": "ngolokante10@gmail.com",
-									"type": "text"
-								},
-								{
-									"key": "phone_number",
-									"value": "082466742",
-									"type": "text"
-								},
-								{
-									"key": "address",
-									"value": "Jakarta, Indonesia",
-									"type": "text"
-								},
-								{
-									"key": "birthdate",
-									"value": "2000-05-30",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{baseUrl}}/users/:id",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "31"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DELETE USER",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/users/:id",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "30"
+									"value": "46"
 								}
 							]
 						}
@@ -410,7 +288,7 @@
 							"query": [
 								{
 									"key": "search",
-									"value": "ves",
+									"value": "hon",
 									"disabled": true
 								},
 								{
@@ -421,41 +299,6 @@
 								{
 									"key": "limit",
 									"value": "100"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "VEHICLES BY CATEGORY",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/vehicles/category/?category=cars",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"vehicles",
-								"category",
-								""
-							],
-							"query": [
-								{
-									"key": "category",
-									"value": "cars"
-								},
-								{
-									"key": "page",
-									"value": "2",
-									"disabled": true
-								},
-								{
-									"key": "limit",
-									"value": "30",
-									"disabled": true
 								}
 							]
 						}
@@ -479,7 +322,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "67"
+									"value": "10"
 								}
 							]
 						}
@@ -492,37 +335,48 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
+							"mode": "formdata",
+							"formdata": [
 								{
 									"key": "id_category",
-									"value": "5",
+									"value": "2",
 									"type": "text"
 								},
 								{
 									"key": "brand",
-									"value": "Mitsubishi Colt L300",
+									"value": "Honda Prima",
 									"type": "text"
 								},
 								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/saput/Downloads/honda-prima.jpg"
+								},
+								{
 									"key": "capacity",
-									"value": "3",
+									"value": "2",
 									"type": "text"
 								},
 								{
 									"key": "location",
-									"value": "Yogyakarta",
+									"value": "Ngawi",
 									"type": "text"
 								},
 								{
 									"key": "price",
-									"value": "90000",
+									"value": "150000",
 									"type": "text"
 								},
 								{
 									"key": "qty",
-									"value": "2",
+									"value": "1",
 									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -539,13 +393,13 @@
 					"response": []
 				},
 				{
-					"name": "EDIT VEHICLE",
+					"name": "EDIT ALL VEHICLE",
 					"request": {
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
+							"mode": "formdata",
+							"formdata": [
 								{
 									"key": "id_category",
 									"value": "2",
@@ -555,6 +409,11 @@
 									"key": "brand",
 									"value": "Vespa Matic",
 									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": []
 								},
 								{
 									"key": "capacity",
@@ -568,18 +427,24 @@
 								},
 								{
 									"key": "price",
-									"value": "200000",
+									"value": "210000",
 									"type": "text"
 								},
 								{
 									"key": "qty",
-									"value": "2",
+									"value": "3",
 									"type": "text"
 								},
 								{
 									"key": "rent_count",
 									"value": "3",
 									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "1",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -596,6 +461,74 @@
 								{
 									"key": "id",
 									"value": "67"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDIT VEHICLE",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id_category",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "location",
+									"value": "Jakarta",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "brand",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "price",
+									"value": "25000",
+									"type": "text"
+								},
+								{
+									"key": "qty",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "rent_count",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "10"
 								}
 							]
 						}
@@ -619,7 +552,41 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "73"
+									"value": "103"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/category/?category=cars&limit=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"category",
+								""
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "cars"
+								},
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "2"
 								}
 							]
 						}
@@ -637,18 +604,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/popular",
+							"raw": "{{baseUrl}}/popular/?search=cars",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"popular"
+								"popular",
+								""
 							],
 							"query": [
 								{
 									"key": "search",
-									"value": "",
-									"disabled": true
+									"value": "cars"
 								},
 								{
 									"key": "page",
@@ -734,40 +701,6 @@
 					"response": []
 				},
 				{
-					"name": "LIST CATEGORIES WITH DATA",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/categories/data?limit=100",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"categories",
-								"data"
-							],
-							"query": [
-								{
-									"key": "search",
-									"value": "cars",
-									"disabled": true
-								},
-								{
-									"key": "page",
-									"value": "3",
-									"disabled": true
-								},
-								{
-									"key": "limit",
-									"value": "100"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "CATEGORY BY ID",
 					"request": {
 						"method": "GET",
@@ -784,7 +717,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "1"
+									"value": "19"
 								}
 							]
 						}
@@ -801,7 +734,7 @@
 							"urlencoded": [
 								{
 									"key": "type",
-									"value": "pesawat",
+									"value": "minibus",
 									"type": "text"
 								}
 							]
@@ -869,7 +802,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "17"
+									"value": "21"
 								}
 							]
 						}
@@ -877,6 +810,494 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "USERS",
+			"item": [
+				{
+					"name": "READ USERS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/?limit=100",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "rinto",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "100"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "USER BY ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD USER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Rinrik Toko",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "Rinrik",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "rokokdosa@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "08987654321",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/registry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"registry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDIT ALL USER",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Ngolo Kante",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "Kante",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/saput/Downloads/ngolo-kante.jpg"
+								},
+								{
+									"key": "email",
+									"value": "ngolokante10@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "0824667426",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "Jakarta, Indonesia",
+									"type": "text"
+								},
+								{
+									"key": "birthdate",
+									"value": "2000-05-30",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDIT USER",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "N'golo Kante",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "Kante",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/saput/Downloads/ngolo-kante.jpg"
+								},
+								{
+									"key": "email",
+									"value": "ngolokante10@gmail.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "phone_number",
+									"value": "+628123456789",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "address",
+									"value": "Jakarta, Indonesia",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "birthdate",
+									"value": "2000-05-03",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "31"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE USER",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "66"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AUTH",
+			"item": [
+				{
+					"name": "REGISTER",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Andon dona",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "Andon",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "andondona@mail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "0846237871",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CONFIRM REGISTRATION",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "Rinrik",
+									"type": "text"
+								},
+								{
+									"key": "code",
+									"value": "8929",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/confrimRegistration",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"confrimRegistration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOGIN",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "Rinrik",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FORGOT PASSWORD",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "rokokdosa@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "code",
+									"value": "5767",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "text"
+								},
+								{
+									"key": "confirmPassword",
+									"value": "1234",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/forgotPassword",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"forgotPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VERIFY",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"verify"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
