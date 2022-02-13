@@ -18,6 +18,8 @@ const login = async (req, res) => {
       const data = { id: result[0].id_user };
       if (username === 'Admin') {
         data.role = 'Admin';
+      } else {
+        data.role = username;
       }
       const token = jwt.sign(data, APP_SECRET);
       return response(req, res, 'Login success', { token });
@@ -61,7 +63,7 @@ const forgotRequest = async (req, res) => {
           mail.sendMail({
             from: APP_EMAIL,
             to: email,
-            subject: 'Your verification code | Backend Beginner',
+            subject: 'Your verification code for reset password | Backend Beginner',
             text: String(randomCode),
             html: `<b>${randomCode}<b>`,
           });

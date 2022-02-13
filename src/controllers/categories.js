@@ -64,22 +64,22 @@ const editCategory = (req, res) => {
     }
     return response(req, res, 'Type must be filled', null, null, 400);
   }
-  return response(req, res, 'Only admin can add category', null, null, 403);
+  return response(req, res, 'Only admin can edit category', null, null, 403);
 };
 
 const deleteCategory = (req, res) => {
-  if (req.user.role === 'Admin') {
-    const { id } = req.params;
-    categoryModel.getCategory(id, (categoryDeleted) => {
-      categoryModel.deleteCategory(id, (results) => {
-        if (results.affectedRows > 0) {
-          return response(req, res, `Vehicle with id ${id} successfully deleted`, categoryDeleted[0]);
-        }
-        return response(req, res, `Failed to delete, category with id ${id} not found`, null, null, 500);
-      });
-    });
+  if (req.user.role !== 'Admin') {
+    return response(req, res, 'Only admin can delete category', null, null, 403);
   }
-  return response(req, res, 'Only admin can add category', null, null, 403);
+  const { id } = req.params;
+  return categoryModel.getCategory(id, (categoryDeleted) => {
+    categoryModel.deleteCategory(id, (results) => {
+      if (results.affectedRows > 0) {
+        return response(req, res, `Vehicle with id ${id} successfully deleted`, categoryDeleted[0]);
+      }
+      return response(req, res, `Failed to delete, category with id ${id} not found`, null, null, 500);
+    });
+  });
 };
 
 module.exports = {
