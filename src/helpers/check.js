@@ -23,7 +23,7 @@ const checkPhone = (phone) => {
 
 const checkDate = (date) => {
   let check = false;
-  if (date.length === 10) {
+  if (String(date).length === 10) {
     if (date[4] === '-' && date[7] === '-') {
       const dateArr = date.split('-');
       const not = /\D/g;

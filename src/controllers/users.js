@@ -61,6 +61,10 @@ const editAllDataUser = (req, res) => {
       return response(req, res, err.message, null, null, 400);
     }
     const { id } = req.params;
+    const user = await userModel.getUserById(id);
+    if (user.length !== 1) {
+      return response(req, res, 'User not available', null, null, 404);
+    }
     const {
       name, username, email, phone_number, address, birthdate,
     } = req.body;

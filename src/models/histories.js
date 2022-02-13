@@ -31,6 +31,15 @@ const getHistory = (id, cb) => {
   });
 };
 
+const getHistoryAsync = (id) => new Promise((resolve, reject) => {
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle  
+  WHERE id_history=?`, [id], (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
+
 const newHistory = (cb) => {
   db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle 
@@ -54,6 +63,13 @@ const editHistory = (data, id, cb) => {
   });
 };
 
+const updateHistory = (data, id) => new Promise((resolve, reject) => {
+  db.query('UPDATE histories SET ? WHERE id_history=?;', [data, id], (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
+
 const getHistoryDeleted = (id, cb) => {
   db.query(`SELECT id_history, rent_start_date, rent_end_date FROM histories WHERE id_history=${id}`, (err, res) => {
     if (err) throw err;
@@ -72,9 +88,11 @@ module.exports = {
   countHistory,
   getHistories,
   getHistory,
+  getHistoryAsync,
   newHistory,
   addHistory,
   editHistory,
+  updateHistory,
   getHistoryDeleted,
   deleteHistory,
 };
