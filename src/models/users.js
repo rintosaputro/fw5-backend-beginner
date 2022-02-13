@@ -36,13 +36,13 @@ const checkUser = (data, cb) => {
   });
 };
 
-// const checkUserById = (id, data, cb) => {
-//   db.query(`SELECT * FROM users WHERE username='${data.username}' OR email='${data.email}' 
-//   OR phone_number='${data.phone_number} WHERE id_user=${id}'`, (err, res) => {
-//     if (err) throw err;
-//     cb(res);
-//   });
-// };
+const checkUserAsync = (data) => new Promise((resolve, reject) => {
+  db.query(`SELECT * FROM users WHERE username='${data.username}' OR email='${data.email}' 
+  OR phone_number='${data.phone_number}'`, (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
 
 const newUser = (cb) => {
   db.query('SELECT * FROM users ORDER BY id_user DESC LIMIT 1', (err, res) => {
@@ -85,6 +85,7 @@ module.exports = {
   getUser,
   getUserById,
   checkUser,
+  checkUserAsync,
   newUser,
   addUser,
   editUser,

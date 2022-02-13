@@ -1,13 +1,14 @@
+/* eslint-disable consistent-return */
 /* eslint-disable max-len */
 /* eslint-disable prefer-const */
 /* eslint-disable camelcase */
 const bcrypt = require('bcrypt');
 const userModel = require('../models/users');
 const helperGet = require('../helpers/get');
-const checkDate = require('../helpers/checkDate');
 const response = require('../helpers/response');
 const upload = require('../helpers/upload').single('image');
-const checkEmail = require('../helpers/checkEmail');
+const deleteImg = require('../helpers/deleteImg');
+const check = require('../helpers/check');
 
 const getUsers = (req, res) => {
   helperGet(req, res, userModel.getUsers, userModel.countUsers, 'users');
@@ -28,10 +29,10 @@ const addUser = (req, res) => {
     name, username, email, password, phone_number,
   } = req.body;
   if (name && username && email && password && phone_number) {
-    if (!checkEmail(email)) {
+    if (!check.checkEmail(email)) {
       return response(req, res, 'Wrong email input', null, null, 400);
     }
-    if (/\D/g.test(phone_number) && (phone_number[0] !== '0' || phone_number[0] !== '+') && phone_number.length < 10 && phone_number.length > 14) {
+    if (!check.checkPhone(phone_number)) {
       return response(req, res, 'Wrong phone number input', null, null, 400);
     }
     const dataCheck = {
@@ -54,34 +55,121 @@ const addUser = (req, res) => {
   return response(req, res, 'Failed to create user, data must be filled', null, null, 400);
 };
 
-const editUser = (req, res) => {
-  const { id } = req.params;
-  const {
-    name, username, email, phone_number, address, birthdate,
-  } = req.body;
+const editAllDataUser = (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      return response(req, res, err.message, null, null, 400);
+    }
+    const { id } = req.params;
+    const {
+      name, username, email, phone_number, address, birthdate,
+    } = req.body;
+    let image;
+    if (req.file) {
+      image = req.file.path;
+    }
+    if (image === undefined) {
+      return response(req, res, 'Image not selected', null, null, 400);
+    }
 
-  if (name && username && email && phone_number && address && birthdate) {
-    const notNumber = /\D/g;
-    if (!notNumber.test(phone_number) && (phone_number[0] === '0' || phone_number[0] === '+') && phone_number.length < 15 && phone_number.length >= 10) {
-      if (checkEmail(email)) {
-        if (checkDate(birthdate)) {
-          const data = {
-            name, username, email, phone_number, address, birthdate,
-          };
-          return userModel.editUser(data, id, (results) => {
-            if (results.changedRows > 0) {
-              return userModel.getUser(id, (rslt) => response(req, res, 'Successfully updated user', rslt[0]));
-            }
-            return response(req, res, 'Failed to update user. Data hasnt changed.', null, null, 400);
-          });
+    if (name && username && image && email && phone_number && address && birthdate) {
+      if (check.checkPhone(phone_number)) {
+        if (check.checkEmail(email)) {
+          if (check.checkDate(birthdate)) {
+            const data = {
+              name, username, image, email, phone_number, address, birthdate,
+            };
+            const pastUser = await userModel.getUserById(id);
+            return userModel.editUser(data, id, (results) => {
+              if (results.affectedRows > 0) {
+                deleteImg.rm(pastUser);
+                return userModel.getUser(id, (rslt) => response(req, res, 'Successfully updated user', rslt[0]));
+              }
+              return response(req, res, 'Unexpected error', null, null, 500);
+            });
+          }
+          return response(req, res, 'Wrong birthdate input. Format birthdate YYYY-MM-DD', null, null, 400);
         }
+        return response(req, res, 'Wrong email input', null, null, 400);
+      }
+      return response(req, res, 'Wrong phone number input', null, null, 400);
+    }
+    return response(req, res, `Failed to edit user with id ${id}. Some data is empty.`, null, null, 400);
+  });
+};
+
+const editUser = (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      return response(req, res, err.message, null, null, 400);
+    }
+    const { id } = req.params;
+    const user = await userModel.getUserById(id);
+    if (user.length !== 1) {
+      return response(req, res, 'User not available', null, null, 404);
+    }
+
+    const {
+      name, username, email, phone_number, address, birthdate,
+    } = req.body;
+
+    let data = {
+      name: name || user[0].name,
+      username: user[0].username,
+      image: user[0].image,
+      email: user[0].email,
+      phone_number: user[0].phone_number,
+      address: address || user[0].address,
+      birthdate: user[0].birthdate,
+    };
+
+    if (req.file) {
+      data.image = req.file.path;
+    }
+    if (username) {
+      const result = await userModel.checkUserAsync({ username });
+      if (result.length > 0) {
+        return response(req, res, 'User name has been used', null, null, 400);
+      }
+      data.username = username;
+    }
+    if (email) {
+      if (!check.checkEmail(email)) {
+        return response(req, res, 'Wrong email input', null, null, 400);
+      }
+      const result = await userModel.checkUserAsync({ email });
+      if (result.length > 0) {
+        return response(req, res, 'Email has been used', null, null, 400);
+      }
+      data.email = email;
+    }
+    if (phone_number) {
+      if (!check.checkPhone(phone_number)) {
+        return response(req, res, 'Wrong phone number input', null, null, 400);
+      }
+      const result = await userModel.checkUserAsync({ phone_number });
+      if (result.length > 0) {
+        return response(req, res, 'phone number has been used', null, null, 400);
+      }
+      data.phone_number = phone_number;
+    }
+    if (birthdate) {
+      if (!check.checkDate(birthdate)) {
         return response(req, res, 'Wrong birthdate input. Format birthdate YYYY-MM-DD', null, null, 400);
       }
-      return response(req, res, 'Wrong email input', null, null, 400);
+      data.phone_number = phone_number;
     }
-    return response(req, res, 'Wrong phone number input', null, null, 400);
-  }
-  return response(req, res, `Failed to edit user with id ${id}. Some data is empty.`, null, null, 400);
+    return userModel.editUser(data, id, async (edited) => {
+      if (edited.affectedRows > 0) {
+        if (req.file) {
+          deleteImg.rm(user);
+        }
+        const results = await userModel.getUserById(id);
+        return response(req, res, 'Data user', results);
+      }
+      return response(req, res, 'Unexpected error', null, null, 500);
+    });
+  });
 };
 
 const deleteUser = (req, res) => {
@@ -100,6 +188,7 @@ module.exports = {
   getUsers,
   getUser,
   addUser,
+  editAllDataUser,
   editUser,
   deleteUser,
 };
