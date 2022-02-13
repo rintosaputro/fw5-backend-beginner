@@ -172,15 +172,22 @@ const editVehicle = (req, res) => {
           });
         }
         const pola = /\D/g;
-        if (data.price && pola.test(data.price)) {
-          return response(req, res, 'price must be number', null, null, 404);
+        if (data.price) {
+          if (pola.test(data.price)) {
+            return response(req, res, 'price must be number', null, null, 404);
+          }
         }
-        if (data.qty && pola.test(data.qty)) {
-          return response(req, res, 'qty must be number', null, null, 404);
+        if (data.qty) {
+          if (pola.test(data.qty)) {
+            return response(req, res, 'qty must be number', null, null, 404);
+          }
         }
-        if (data.rent_count && pola.test(data.rent_count)) {
-          return response(req, res, 'rent_count must be number', null, null, 404);
+        if (data.rent_count) {
+          if (pola.test(data.rent_count)) {
+            return response(req, res, 'rent_count must be number', null, null, 404);
+          }
         }
+
         if (Object.keys(data).length > 0) {
           return vehicleModel.editAllVehicle(data, id, (results) => {
             if (results.affectedRows > 0) {
