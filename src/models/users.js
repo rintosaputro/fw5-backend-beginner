@@ -79,6 +79,13 @@ const getUserByUserName = (data) => new Promise((resolve, reject) => {
   });
 });
 
+const editUserByUserName = (username) => new Promise((resolve, reject) => {
+  db.query('UPDATE users SET confirm=NULL WHERE username = ?', [username], (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
+
 module.exports = {
   countUsers,
   getUsers,
@@ -91,4 +98,5 @@ module.exports = {
   editUser,
   deleteUser,
   getUserByUserName,
+  editUserByUserName,
 };

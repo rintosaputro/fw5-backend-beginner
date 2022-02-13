@@ -115,12 +115,25 @@ const forgotRequest = async (req, res) => {
 
 const confirmRegistration = async (req, res) => {
   const {
-    username, password, confirm,
+    username, password, code,
   } = req.body;
-  if (username, password, confirm) {
-    const user = await userModel.getUserByUserName({ username });
-    if (user.length === 1) {}
+  if (username && password && code) {
+    const user = await userModel.getUserByUserName(username);
+    if (user.length === 1) {
+      if (code === user[0].confirm) {
+        const hash = user[0].password;
+        const validatePwd = await bcrypt.compare(password, hash);
+        if (validatePwd) {
+          await userModel.editUserByUserName(username);
+          return response(req, res, 'Confirm successfully');
+        }
+        return response(req, res, 'Wrong password', null, null, 403);
+      }
+      return response(req, res, 'Wrong code', null, null, 403);
+    }
+    return response(req, res, 'Unknown user', null, null, 400);
   }
+  return response(req, res, 'Data is empty', null, null, 400);
 };
 
 module.exports = {
