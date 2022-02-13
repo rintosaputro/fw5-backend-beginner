@@ -30,7 +30,7 @@ const addHistory = (req, res) => {
 
   if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
     if (!check.checkStartEnd(rent_start_date, rent_end_date)) {
-      return response(req, res, 'rent start must be greater than rent end', null, null, 400);
+      return response(req, res, 'rent end must be greater than rent start', null, null, 400);
     }
     return userModel.getUser(id_user, (user) => {
       if (user.length > 0) {
@@ -69,7 +69,7 @@ const editAllHistory = (req, res) => {
 
     if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment && status) {
       if (!check.checkStartEnd(rent_start_date, rent_end_date)) {
-        return response(req, res, 'rent start must be greater than rent end', null, null, 400);
+        return response(req, res, 'rent end must be greater than rent start', null, null, 400);
       }
       return userModel.getUser(id_user, (user) => {
         if (user.length > 0) {
@@ -163,6 +163,9 @@ const editHistory = async (req, res) => {
         return response(req, res, 'Status unknown! 1 for has been returned and 2 for not been returned', null, null, 400);
       }
       data.status = status;
+    }
+    if (!check.checkStartEnd(data.rent_start_date, data.rent_end_date)) {
+      return response(req, res, 'rent end must be greater than rent start', null, null, 400);
     }
     const update = await historyModel.updateHistory(data, id);
     if (update.affectedRows > 0) {
