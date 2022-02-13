@@ -12,6 +12,9 @@ const login = async (req, res) => {
   const { username, password } = req.body;
   const result = await userModel.getUserByUserName(username);
   if (result.length > 0) {
+    if (result[0].confirm) {
+      return response(req, res, 'Please confirm your registration', null, null, 400);
+    }
     const hash = result[0].password;
     const validatePwd = await bcrypt.compare(password, hash);
     if (validatePwd) {
@@ -110,8 +113,19 @@ const forgotRequest = async (req, res) => {
   return response(req, res, 'You have to provide confirmation data', null, null, 400);
 };
 
+const confirmRegistration = async (req, res) => {
+  const {
+    username, password, confirm,
+  } = req.body;
+  if (username, password, confirm) {
+    const user = await userModel.getUserByUserName({ username });
+    if (user.length === 1) {}
+  }
+};
+
 module.exports = {
   login,
   verify,
   forgotRequest,
+  confirmRegistration,
 };

@@ -9,6 +9,9 @@ const response = require('../helpers/response');
 const upload = require('../helpers/upload').single('image');
 const deleteImg = require('../helpers/deleteImg');
 const check = require('../helpers/check');
+const mail = require('../helpers/codeMail');
+
+const { APP_EMAIL } = process.env;
 
 const getUsers = (req, res) => {
   helperGet(req, res, userModel.getUsers, userModel.countUsers, 'users');
@@ -42,13 +45,21 @@ const addUser = (req, res) => {
       if (user.length > 0) {
         return response(req, res, 'User name or phone or email has been registered', null, null, 400);
       }
+      const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
+      mail.sendMail({
+        from: APP_EMAIL,
+        to: email,
+        subject: 'Verification code | Backend Beginner',
+        text: String(randomCode),
+        html: `<b>${randomCode}<b>`,
+      });
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
       const data = {
-        name, username, email, password: hash, phone_number,
+        name, username, email, password: hash, phone_number, confirm: randomCode,
       };
-      return userModel.addUser(data, () => {
-        userModel.newUser((results) => response(req, res, 'Successfully added new user', results[0]));
+      return userModel.addUser(data, (rslt) => {
+        userModel.newUser(rslt.insertId, (results) => response(req, res, `Code verification send to ${email}`, results[0]));
       });
     });
   }

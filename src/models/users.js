@@ -44,17 +44,17 @@ const checkUserAsync = (data) => new Promise((resolve, reject) => {
   });
 });
 
-const newUser = (cb) => {
-  db.query('SELECT * FROM users ORDER BY id_user DESC LIMIT 1', (err, res) => {
+const newUser = (id, cb) => {
+  db.query('SELECT id_user, name, username, email, phone_number FROM users WHERE id_user=?', [id], (err, res) => {
     if (err) throw err;
     cb(res);
   });
 };
 
 const addUser = (data, cb) => {
-  db.query('INSERT INTO users SET ?', [data], (err) => {
+  db.query('INSERT INTO users SET ?', [data], (err, res) => {
     if (err) throw err;
-    cb();
+    cb(res);
   });
 };
 
@@ -73,7 +73,7 @@ const deleteUser = (id, cb) => {
 };
 
 const getUserByUserName = (data) => new Promise((resolve, reject) => {
-  db.query(`SELECT id_user, username, password FROM users WHERE username='${data}' OR email='${data}'`, (err, res) => {
+  db.query(`SELECT id_user, username, password, confirm FROM users WHERE username='${data}' OR email='${data}'`, (err, res) => {
     if (err) reject(err);
     resolve(res);
   });
