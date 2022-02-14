@@ -215,8 +215,9 @@ const deleteVehicle = (req, res) => {
         return response(req, res, `Failed to delete vehicle with id ${id}`, null, null, 500);
       });
     });
+  } else {
+    return response(req, res, 'Only admin can delte vehicle', null, null, 403);
   }
-  return response(req, res, 'Only admin can delte vehicle', null, null, 403);
 };
 
 module.exports = {

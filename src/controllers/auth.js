@@ -65,7 +65,7 @@ const forgotRequest = async (req, res) => {
         mail.sendMail({
           from: APP_EMAIL,
           to: email,
-          subject: 'Your verification code for reset password | Rent Vehicles',
+          subject: 'Your verification code for reset password | Vehicles Rent',
           text: String(randomCode),
           html: `<b>${randomCode}<b>`,
         });

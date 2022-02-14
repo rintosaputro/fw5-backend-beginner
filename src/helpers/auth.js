@@ -5,8 +5,10 @@ const response = require('./response');
 const { APP_SECRET } = process.env;
 
 exports.verifyUser = (req, res, next) => {
-  // return response(req, res, 'Token is available', { headers: req.headers });
   const auth = req.headers.authorization;
+  if (!auth) {
+    return response(req, res, 'Please login first', null, null, 403);
+  }
   if (auth.startsWith('Bearer')) {
     const token = auth.split(' ')[1];
     if (token) {
@@ -23,4 +25,5 @@ exports.verifyUser = (req, res, next) => {
     }
     return response(req, res, 'Token must be provided', null, null, 403);
   }
+  return response(req, res, 'Unexpected error', null, null, 500);
 };

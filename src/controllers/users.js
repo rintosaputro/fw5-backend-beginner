@@ -39,7 +39,7 @@ const addUser = (req, res) => {
       return response(req, res, 'Wrong phone number input', null, null, 400);
     }
     if (!check.checkPassword(password)) {
-      return response(req, res, 'password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
+      return response(req, res, 'Password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
     }
     const dataCheck = {
       username, email, phone_number,
@@ -52,7 +52,7 @@ const addUser = (req, res) => {
       mail.sendMail({
         from: APP_EMAIL,
         to: email,
-        subject: 'Registration verification code | Rent Vehicles',
+        subject: 'Registration verification code | Vehicles Rent',
         text: String(randomCode),
         html: `<b>${randomCode}<b>`,
       });
