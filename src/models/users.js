@@ -10,7 +10,7 @@ const countUsers = (data, cb) => {
 };
 
 const getUsers = (data, cb) => {
-  db.query(`SELECT id_user, name, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
+  db.query(`SELECT id_user, name, username, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
   FROM users WHERE name LIKE '${data.search}%' LIMIT ${data.limit} OFFSET ${data.offset}`, (err, res) => {
     if (err) throw err;
     cb(res);
@@ -18,7 +18,7 @@ const getUsers = (data, cb) => {
 };
 
 const getUser = (id, cb) => {
-  db.query(`SELECT id_user, name, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
+  db.query(`SELECT id_user, name, username, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
   FROM users WHERE id_user=?`, [id], (err, res) => {
     if (err) throw err;
     cb(res);
@@ -26,7 +26,7 @@ const getUser = (id, cb) => {
 };
 
 const getUserById = (id) => new Promise((resolve, reject) => {
-  db.query(`SELECT id_user, name, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
+  db.query(`SELECT id_user, name, username, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
   FROM users WHERE id_user = ?`, [id], (err, res) => {
     if (err) reject(err);
     resolve(res);
@@ -34,7 +34,7 @@ const getUserById = (id) => new Promise((resolve, reject) => {
 });
 
 const checkUser = (data, cb) => {
-  db.query(`SELECT id_user, name, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
+  db.query(`SELECT id_user, name, username, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
   FROM users WHERE username='${data.username}' OR email='${data.email}' 
   OR phone_number='${data.phone_number}'`, (err, res) => {
     if (err) throw err;
@@ -43,7 +43,7 @@ const checkUser = (data, cb) => {
 };
 
 const checkUserAsync = (data) => new Promise((resolve, reject) => {
-  db.query(`SELECT id_user, name, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
+  db.query(`SELECT id_user, name, username, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
   FROM users WHERE username='${data.username}' OR email='${data.email}' 
   OR phone_number='${data.phone_number}'`, (err, res) => {
     if (err) reject(err);

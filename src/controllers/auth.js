@@ -5,6 +5,7 @@ const response = require('../helpers/response');
 const userModel = require('../models/users');
 const forgotModel = require('../models/forgotRequest');
 const mail = require('../helpers/codeMail');
+const check = require('../helpers/check');
 
 const { APP_SECRET, APP_EMAIL } = process.env;
 
@@ -86,6 +87,9 @@ const forgotRequest = async (req, res) => {
         const user = await userModel.getUserById(idUser);
         if (user[0].email === email) {
           if (password) {
+            if (!check.checkPassword(password)) {
+              return response(req, res, 'password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
+            }
             if (password === confirmPassword) {
               const salt = await bcrypt.genSalt(10);
               const hash = await bcrypt.hash(password, salt);
