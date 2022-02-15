@@ -80,12 +80,19 @@ const newHistory = (cb) => {
   });
 };
 
-const addHistory = (data, cb) => {
+// const addHistory = (data, cb) => {
+//   db.query('INSERT INTO histories SET ?', [data], (err, res) => {
+//     if (err) throw err;
+//     cb(res);
+//   });
+// };
+
+const addHistory = (data) => new Promise((resolve, reject) => {
   db.query('INSERT INTO histories SET ?', [data], (err, res) => {
-    if (err) throw err;
-    cb(res);
+    if (err) reject(err);
+    resolve(res);
   });
-};
+});
 
 const editHistory = (data, id, cb) => {
   db.query('UPDATE histories SET ? WHERE id_history=?;', [data, id], (err, res) => {
