@@ -22,6 +22,28 @@ const getHistories = (data, cb) => {
   });
 };
 
+const countHistoryByUsername = (username, data, cb) => {
+  db.query(`SELECT COUNT(*) AS total FROM histories h 
+  LEFT JOIN vehicles v ON h.id_vehicle =v.id_vehicle 
+  LEFT JOIN users u ON h.id_user = u.id_user
+  WHERE u.username='${username}' AND v.type LIKE '${data.search}%'
+  `, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
+const getHistoriesByUsername = (username, data, cb) => {
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle 
+  WHERE u.username='${username}' AND v.type LIKE '${data.search}%'
+  ORDER by h.id_history ASC
+  LIMIT ${data.limit} OFFSET ${data.offset};`, (err, res) => {
+    if (err) throw err;
+    cb(res);
+  });
+};
+
 const getHistory = (id, cb) => {
   db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle  
@@ -30,6 +52,15 @@ const getHistory = (id, cb) => {
     cb(res);
   });
 };
+
+const getHistoryUser = (idHistory, idUser) => new Promise((resolve, reject) => {
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle  
+  WHERE h.id_history=? AND h.id_user=?`, [idHistory, idUser], (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
 
 const getHistoryAsync = (id) => new Promise((resolve, reject) => {
   db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
@@ -87,7 +118,10 @@ const deleteHistory = (id, cb) => {
 module.exports = {
   countHistory,
   getHistories,
+  countHistoryByUsername,
+  getHistoriesByUsername,
   getHistory,
+  getHistoryUser,
   getHistoryAsync,
   newHistory,
   addHistory,

@@ -10,17 +10,30 @@ const response = require('../helpers/response');
 const check = require('../helpers/check');
 
 const getHistories = (req, res) => {
-  helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
+  const username = req.user.role;
+  if (username === 'Admin') {
+    helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
+  } else {
+    helperGet(req, res, historyModel.getHistoriesByUsername, historyModel.countHistoryByUsername, 'histories', username);
+  }
 };
 
-const getHistory = (req, res) => {
+const getHistory = async (req, res) => {
   const { id } = req.params;
-  historyModel.getHistory(id, (results) => {
+  const user = req.user.role;
+  const resFin = (results) => {
     if (results.length > 0) {
       return response(req, res, `History with id ${id}`, results[0]);
     }
     return response(req, res, 'History not found', null, null, 404);
-  });
+  };
+  if (user === 'Admin') {
+    const result = await historyModel.getHistoryAsync(id);
+    resFin(result);
+  } else {
+    const result = await historyModel.getHistoryUser(id, req.user.id);
+    resFin(result);
+  }
 };
 
 const addHistory = (req, res) => {
