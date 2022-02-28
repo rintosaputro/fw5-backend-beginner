@@ -34,8 +34,8 @@ const getVehicleCategory = (req, res) => {
         const last = Math.ceil(total / limit);
         const results = resultsFin;
         const pageInfo = {
-          prev: page > 1 ? `http://localhost:5000/vehicles/category/?category=${filter}&page=${page - 1}&limit=${limit}` : null,
-          next: page < last ? `http://localhost:5000/vehicles/category/?category=${filter}&page=${page + 1}&limit=${limit}` : null,
+          prev: page > 1 ? `http://localhost:5000/vehicles/category/?search=${search}&filter=${filter}&page=${page - 1}&limit=${limit}` : null,
+          next: page < last ? `http://localhost:5000/vehicles/category/?search=${search}&filter=${filter}&page=${page + 1}&limit=${limit}` : null,
           totalData: total,
           currentPage: page,
           lastPage: last,
