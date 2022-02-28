@@ -1,6 +1,9 @@
+/* eslint-disable prefer-const */
+/* eslint-disable max-len */
 /* eslint-disable consistent-return */
 /* eslint-disable camelcase */
 /* eslint-disable radix */
+const camelCase = require('camelcase-keys');
 const historyModel = require('../models/histories');
 const vehicleModel = require('../models/vehicles');
 const userModel = require('../models/users');
@@ -9,13 +12,56 @@ const helperGet = require('../helpers/get');
 const response = require('../helpers/response');
 const check = require('../helpers/check');
 
+// const getHistories = (req, res) => {
+//   const username = req.user.role;
+//   if (username === 'Admin') {
+//     helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
+//   } else {
+//     helperGet(req, res, historyModel.getHistoriesByUsername, historyModel.countHistoryByUsername, 'histories', username);
+//   }
+// };
 const getHistories = (req, res) => {
-  const username = req.user.role;
-  if (username === 'Admin') {
-    helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
-  } else {
-    helperGet(req, res, historyModel.getHistoriesByUsername, historyModel.countHistoryByUsername, 'histories', username);
-  }
+  helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
+  // const username = req.user.role;
+  // if (username === 'Admin') {
+  //   helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
+  // } else {
+  //   helperGet(req, res, historyModel.getHistoriesByUsername, historyModel.countHistoryByUsername, 'histories', username);
+  // }
+};
+
+const getHistoriesByFilter = async (req, res) => {
+  let {
+    type, location, createdAt, sort, limit, page,
+  } = req.query;
+  type = type || '';
+  location = location || '';
+  createdAt = createdAt || '';
+  sort = sort || 'DESC';
+  page = parseInt(page, 10) || 1;
+  limit = parseInt(limit, 10) || 5;
+  const offset = (page - 1) * limit;
+  const data = {
+    type, location, createdAt, sort, limit, page, offset,
+  };
+
+  const result = await historyModel.getHistoriesFilter(data);
+  return historyModel.countHistoryFilter(data, (count) => {
+    const { total } = count[0];
+    const last = Math.ceil(total / limit);
+    const resFin = camelCase(result);
+    const pageInfo = {
+      prev: page > 1 ? `http://localhost:5000/categories?type=${type}&location=${location}&createdAt=${createdAt}&sort=${sort}&page=${page - 1}&limit=${limit}` : null,
+      next: page < last ? `http://localhost:5000/vehicles/category/?category=&page=${page + 1}&limit=${limit}` : null,
+      totalData: total,
+      currentPage: page,
+      lastPage: last,
+    };
+    if (result.length > 0) {
+      return response(req, res, 'List histories', resFin, pageInfo);
+    }
+    return response(req, res, 'Page not found', null, null, 404);
+  });
 };
 
 const getHistory = async (req, res) => {
@@ -215,6 +261,7 @@ const deleteHistory = (req, res) => {
 
 module.exports = {
   getHistories,
+  getHistoriesByFilter,
   getHistory,
   addHistory,
   editAllHistory,

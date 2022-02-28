@@ -14,13 +14,18 @@ const getVehicles = (req, res) => {
 };
 
 const getVehicleCategory = (req, res) => {
-  let { category, page, limit } = req.query;
+  let {
+    brand, category, page, limit,
+  } = req.query;
+  brand = brand || '';
   category = category || '';
   page = parseInt(page, 10) || 1;
   limit = parseInt(limit, 10) || 5;
 
   const offset = (page - 1) * limit;
-  const data = { category, limit, offset };
+  const data = {
+    brand, category, limit, offset,
+  };
 
   vehicleModel.getVehicleCategory(data, (resultsFin) => {
     if (resultsFin.length > 0) {

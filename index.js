@@ -4,7 +4,11 @@ require('dotenv').config();
 
 const app = express();
 
+const cors = require('cors');
+
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
 
 app.use(require('./src/routes'));
 
