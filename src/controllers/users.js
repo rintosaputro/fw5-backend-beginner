@@ -97,8 +97,9 @@ const editAllDataUser = (req, res) => {
       if (check.checkPhone(phone_number)) {
         if (check.checkEmail(email)) {
           if (check.checkDate(birthdate)) {
+            const resImage = image.replace(/\\/g, '/');
             const data = {
-              name, username, image, email, phone_number, address, birthdate,
+              name, username, image, email: resImage, phone_number, address, birthdate,
             };
             const pastUser = await userModel.getUserById(id);
             return userModel.editUser(data, id, (results) => {
@@ -145,7 +146,7 @@ const editUser = (req, res) => {
     };
 
     if (req.file) {
-      data.image = req.file.path;
+      data.image = req.file.path.replace(/\\/g, '/');
     }
     if (username) {
       const result = await userModel.checkUserAsync({ username });

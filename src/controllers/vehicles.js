@@ -80,8 +80,9 @@ const addVehicle = (req, res) => {
             if (!regex.test(price)) {
               if (!regex.test(qty) && qty > 0) {
                 const typeCategory = checkType[0].type;
+                const resImage = image.replace(/\\/g, '/');
                 const data = {
-                  id_category, type: typeCategory, brand, image, capacity, location, price, qty,
+                  id_category, type: typeCategory, brand, image: resImage, capacity, location, price, qty,
                 };
                 return vehicleModel.checkVehicle(data, (checkResult) => {
                   if (checkResult.length > 0) {
@@ -129,8 +130,9 @@ const editAllVehicle = (req, res) => {
             if (!notNum.test(price) && !notNum.test(qty) && !notNum.test(rent_count)) {
               const typeCategory = checkType[0].type;
               const status = Number(qty) > 0 ? 1 : 2;
+              const resImage = image.replace(/\\/g, '/');
               const dataBody = {
-                id_category, type: typeCategory, brand, image, capacity, location, price, qty, rent_count, status,
+                id_category, type: typeCategory, brand, image: resImage, capacity, location, price, qty, rent_count, status,
               };
               vehicleModel.getVehicle(id, (vehicleData) => deleteImg.rm(vehicleData));
               return vehicleModel.editAllVehicle(dataBody, id, (results) => {
@@ -167,7 +169,7 @@ const editVehicle = (req, res) => {
           }
         });
         if (req.file) {
-          data.image = req.file.path;
+          data.image = req.file.path.replace(/\\/g, '/');
         }
         if (data.id_category) {
           categoriesModel.getCategory(data.id_category, (category) => {
