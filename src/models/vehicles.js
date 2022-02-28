@@ -31,7 +31,7 @@ const getVehicleCategory = (data, cb) => {
   db.query(`SELECT v.id_vehicle, v.id_category, v.type, v.brand , CONCAT('${APP_URL}/', v.image) AS image, v.capacity, v.location, v.price, v.qty, v.payment, v.rent_count, v.status, v.createdAt, v.updatedAt
   FROM vehicles v 
   LEFT JOIN categories c ON v.id_category = c.id_category 
-  WHERE v.brand LIKE '${data.brand}%' AND c.type LIKE '${data.category}%'
+  WHERE v.location LIKE '${data.filter}%' AND (v.brand LIKE '${data.search}%' OR c.type LIKE '${data.search}%')
   LIMIT ${data.limit} OFFSET ${data.offset};
   `, (err, res) => {
     if (err) throw err;

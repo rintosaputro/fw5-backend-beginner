@@ -130,24 +130,28 @@ const editUser = (req, res) => {
     if (user.length !== 1) {
       return response(req, res, 'User not available', null, null, 404);
     }
-
+    let image;
+    if (req.file) {
+      image = req.file.path.replace(/\\/g, '/');
+    }
     const {
-      name, username, email, phone_number, address, birthdate,
+      name, username, email, phone_number, address, birthdate, gender,
     } = req.body;
 
     let data = {
       name: name || user[0].name,
       username: user[0].username,
-      image: user[0].image,
+      image: image || user[0].image,
       email: user[0].email,
       phone_number: user[0].phone_number,
       address: address || user[0].address,
       birthdate: user[0].birthdate,
+      gender: gender || user[0].gender,
     };
 
-    if (req.file) {
-      data.image = req.file.path.replace(/\\/g, '/');
-    }
+    // if (req.file) {
+    //   data.image = req.file.path.replace(/\\/g, '/');
+    // }
     if (username) {
       const result = await userModel.checkUserAsync({ username });
       if (result.length > 0) {

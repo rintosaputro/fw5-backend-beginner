@@ -15,16 +15,16 @@ const getVehicles = (req, res) => {
 
 const getVehicleCategory = (req, res) => {
   let {
-    brand, category, page, limit,
+    search, filter, page, limit,
   } = req.query;
-  brand = brand || '';
-  category = category || '';
+  search = search || '';
+  filter = filter || '';
   page = parseInt(page, 10) || 1;
   limit = parseInt(limit, 10) || 5;
 
   const offset = (page - 1) * limit;
   const data = {
-    brand, category, limit, offset,
+    search, filter, limit, offset,
   };
 
   vehicleModel.getVehicleCategory(data, (resultsFin) => {
@@ -34,14 +34,14 @@ const getVehicleCategory = (req, res) => {
         const last = Math.ceil(total / limit);
         const results = resultsFin;
         const pageInfo = {
-          prev: page > 1 ? `http://localhost:5000/vehicles/category/?category=${category}&page=${page - 1}&limit=${limit}` : null,
-          next: page < last ? `http://localhost:5000/vehicles/category/?category=${category}&page=${page + 1}&limit=${limit}` : null,
+          prev: page > 1 ? `http://localhost:5000/vehicles/category/?category=${filter}&page=${page - 1}&limit=${limit}` : null,
+          next: page < last ? `http://localhost:5000/vehicles/category/?category=${filter}&page=${page + 1}&limit=${limit}` : null,
           totalData: total,
           currentPage: page,
           lastPage: last,
         };
 
-        return response(req, res, `List vehicles by category ${category}`, results, pageInfo);
+        return response(req, res, `List vehicles by category ${filter}`, results, pageInfo);
       });
     }
     return response(req, res, 'Page not found', null, null, 404);
