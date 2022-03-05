@@ -4,6 +4,7 @@ const {
   getVehicles,
   getVehicleCategory,
   getVehicle,
+  getNewVehicle,
   addVehicle,
   editAllVehicle,
   editVehicle,
@@ -14,6 +15,7 @@ const { verifyUser } = require('../helpers/auth');
 vehicles.get('/', getVehicles);
 vehicles.post('/', verifyUser, addVehicle);
 vehicles.get('/category', getVehicleCategory);
+vehicles.get('/new', getNewVehicle);
 vehicles.get('/:id', getVehicle);
 vehicles.put('/:id', verifyUser, editAllVehicle);
 vehicles.patch('/:id', verifyUser, editVehicle);
