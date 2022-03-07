@@ -290,9 +290,9 @@ const editHistory = async (req, res) => {
 };
 
 const deleteHistory = (req, res) => {
-  if (req.user.role === 'Admin') {
+  if (req.user) {
     const { id } = req.params;
-    historyModel.getHistoryDeleted(id, (historyDeleted) => {
+    return historyModel.getHistoryDeleted(id, (historyDeleted) => {
       historyModel.deleteHistory(id, (results) => {
         if (results.affectedRows > 0) {
           return response(req, res, `History with id ${id} successfully deleted`, historyDeleted[0]);
