@@ -84,7 +84,7 @@ const getHistory = async (req, res) => {
 
 const addHistory = async (req, res) => {
   const {
-    id_vehicle, rent_start_date, rent_end_date, prepayment,
+    id_vehicle, rent_start_date,
   } = req.body;
   let id_user;
   if (req.user.role === 'Admin') {
@@ -92,7 +92,7 @@ const addHistory = async (req, res) => {
   } else {
     id_user = req.user.id;
   }
-  if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
+  if (id_user && id_vehicle && rent_start_date) {
     const user = await userModel.getUserById(id_user);
     if (user.length === 0) {
       return response(req, res, 'User is not available', null, null, 400);
@@ -101,21 +101,21 @@ const addHistory = async (req, res) => {
     if (vehicle.length === 0) {
       return response(req, res, 'Vehicle is not available', null, null, 400);
     }
-    if (!check.checkDate(rent_start_date) || !check.checkDate(rent_end_date)) {
+    if (!check.checkDate(rent_start_date)) {
       return response(req, res, 'Wrong date input. Format date YYYY-MM-DD', null, null, 400);
     }
-    if (!check.checkStartEnd(rent_start_date, rent_end_date)) {
-      return response(req, res, 'rent end must be greater than rent start', null, null, 400);
-    }
-    if (/\D/g.test(prepayment)) {
-      return response(req, res, 'Prepayment must be number', null, null, 400);
-    }
-    const minPrepayment = vehicle[0].price * (20 / 100);
-    if (Number(prepayment) < minPrepayment) {
-      return response(req, res, `Minimal prepayment is ${minPrepayment}`, null, null, 400);
-    }
+    // if (!check.checkStartEnd(rent_start_date, rent_end_date)) {
+    //   return response(req, res, 'rent end must be greater than rent start', null, null, 400);
+    // }
+    // if (/\D/g.test(prepayment)) {
+    //   return response(req, res, 'Prepayment must be number', null, null, 400);
+    // }
+    // const minPrepayment = vehicle[0].price * (20 / 100);
+    // if (Number(prepayment) < minPrepayment) {
+    //   return response(req, res, `Minimal prepayment is ${minPrepayment}`, null, null, 400);
+    // }
     const data = {
-      id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status: 2,
+      id_user, id_vehicle, rent_start_date, status: 2,
     };
     const addNewHistory = await historyModel.addHistory(data);
     if (addNewHistory.affectedRows > 0) {
@@ -127,6 +127,51 @@ const addHistory = async (req, res) => {
   }
   return response(req, res, 'Failed add new history, data must be filled', null, null, 400);
 };
+// const addHistory = async (req, res) => {
+//   const {
+//     id_vehicle, rent_start_date, rent_end_date, prepayment,
+//   } = req.body;
+//   let id_user;
+//   if (req.user.role === 'Admin') {
+//     id_user = req.body.id_user;
+//   } else {
+//     id_user = req.user.id;
+//   }
+//   if (id_user && id_vehicle && rent_start_date && rent_end_date && prepayment) {
+//     const user = await userModel.getUserById(id_user);
+//     if (user.length === 0) {
+//       return response(req, res, 'User is not available', null, null, 400);
+//     }
+//     const vehicle = await vehicleModel.getVehicleAsync(id_vehicle);
+//     if (vehicle.length === 0) {
+//       return response(req, res, 'Vehicle is not available', null, null, 400);
+//     }
+//     if (!check.checkDate(rent_start_date) || !check.checkDate(rent_end_date)) {
+//       return response(req, res, 'Wrong date input. Format date YYYY-MM-DD', null, null, 400);
+//     }
+//     if (!check.checkStartEnd(rent_start_date, rent_end_date)) {
+//       return response(req, res, 'rent end must be greater than rent start', null, null, 400);
+//     }
+//     if (/\D/g.test(prepayment)) {
+//       return response(req, res, 'Prepayment must be number', null, null, 400);
+//     }
+//     const minPrepayment = vehicle[0].price * (20 / 100);
+//     if (Number(prepayment) < minPrepayment) {
+//       return response(req, res, `Minimal prepayment is ${minPrepayment}`, null, null, 400);
+//     }
+//     const data = {
+//       id_user, id_vehicle, rent_start_date, rent_end_date, prepayment, status: 2,
+//     };
+//     const addNewHistory = await historyModel.addHistory(data);
+//     if (addNewHistory.affectedRows > 0) {
+//       vehicleModel.addRentCount(id_vehicle);
+//       const newHistory = await historyModel.getHistoryAsync(addNewHistory.insertId);
+//       return response(req, res, 'Successfully added new History', newHistory[0]);
+//     }
+//     return response(req, res, 'Unexpedted error', null, null, 500);
+//   }
+//   return response(req, res, 'Failed add new history, data must be filled', null, null, 400);
+// };
 
 const editAllHistory = (req, res) => {
   if (req.user.role === 'Admin') {
