@@ -9,7 +9,7 @@ users.get('/', getUsers);
 users.post('/registry', addUser);
 users.get('/:id', getUser);
 users.put('/:id', verifyUser, editAllDataUser);
-users.patch('/:id', verifyUser, editUser);
+users.patch('/', verifyUser, editUser);
 users.delete('/:id', verifyUser, deleteUser);
 
 module.exports = users;

@@ -29,24 +29,24 @@ const getUser = (req, res) => {
 
 const addUser = (req, res) => {
   const {
-    name, username, email, password, phone_number,
+    name, username, email, password,
   } = req.body;
-  if (name && username && email && password && phone_number) {
+  if (name && username && email && password) {
     if (!check.checkEmail(email)) {
       return response(req, res, 'Wrong email input', null, null, 400);
     }
-    if (!check.checkPhone(phone_number)) {
-      return response(req, res, 'Wrong phone number input', null, null, 400);
-    }
+    // if (!check.checkPhone(phone_number)) {
+    //   return response(req, res, 'Wrong phone number input', null, null, 400);
+    // }
     if (!check.checkPassword(password)) {
       return response(req, res, 'Password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
     }
     const dataCheck = {
-      username, email, phone_number,
+      username, email,
     };
     return userModel.checkUser(dataCheck, async (user) => {
       if (user.length > 0) {
-        return response(req, res, 'User name or phone or email has been registered', null, null, 400);
+        return response(req, res, 'User name or email has been registered', null, null, 400);
       }
       const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
       mail.sendMail({
@@ -59,7 +59,7 @@ const addUser = (req, res) => {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
       const data = {
-        name, username, email, password: hash, phone_number, confirm: randomCode,
+        name, username, email, password: hash, confirm: randomCode,
       };
       return userModel.addUser(data, (rslt) => {
         if (rslt.affectedRows === 0) {
@@ -71,6 +71,51 @@ const addUser = (req, res) => {
   }
   return response(req, res, 'Failed to create user, data must be filled', null, null, 400);
 };
+
+// const addUser = (req, res) => {
+//   const {
+//     name, username, email, password, phone_number,
+//   } = req.body;
+//   if (name && username && email && password && phone_number) {
+//     if (!check.checkEmail(email)) {
+//       return response(req, res, 'Wrong email input', null, null, 400);
+//     }
+//     if (!check.checkPhone(phone_number)) {
+//       return response(req, res, 'Wrong phone number input', null, null, 400);
+//     }
+//     if (!check.checkPassword(password)) {
+//       return response(req, res, 'Password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
+//     }
+//     const dataCheck = {
+//       username, email, phone_number,
+//     };
+//     return userModel.checkUser(dataCheck, async (user) => {
+//       if (user.length > 0) {
+//         return response(req, res, 'User name or phone or email has been registered', null, null, 400);
+//       }
+//       const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
+//       mail.sendMail({
+//         from: APP_EMAIL,
+//         to: email,
+//         subject: 'Registration verification code | Vehicles Rent',
+//         text: String(randomCode),
+//         html: `<b>${randomCode}<b>`,
+//       });
+//       const salt = await bcrypt.genSalt(10);
+//       const hash = await bcrypt.hash(password, salt);
+//       const data = {
+//         name, username, email, password: hash, phone_number, confirm: randomCode,
+//       };
+//       return userModel.addUser(data, (rslt) => {
+//         if (rslt.affectedRows === 0) {
+//           return response(req, res, 'Unexpected error', null, null, 500);
+//         }
+//         userModel.newUser(rslt.insertId, (results) => response(req, res, `Verification code has been sent to ${email}`, results[0]));
+//       });
+//     });
+//   }
+//   return response(req, res, 'Failed to create user, data must be filled', null, null, 400);
+// };
 
 const editAllDataUser = (req, res) => {
   upload(req, res, async (err) => {
@@ -125,7 +170,8 @@ const editUser = (req, res) => {
     if (err) {
       return response(req, res, err.message, null, null, 400);
     }
-    const { id } = req.params;
+    // const { id } = req.params;
+    const { id } = req.user;
     const user = await userModel.getUserById(id);
     if (user.length !== 1) {
       return response(req, res, 'User not available', null, null, 404);
@@ -145,7 +191,7 @@ const editUser = (req, res) => {
       email: user[0].email,
       phone_number: user[0].phone_number,
       address: address || user[0].address,
-      birthdate: user[0].birthdate,
+      birthdate: birthdate || user[0].birthdate,
       gender: gender || user[0].gender,
     };
 
@@ -195,6 +241,8 @@ const editUser = (req, res) => {
       }
       return response(req, res, 'Unexpected error', null, null, 500);
     });
+    // console.log(id);
+    // res.json('test');
   });
 };
 
