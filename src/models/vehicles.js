@@ -103,6 +103,13 @@ const addRentCount = (id) => {
   db.query(`UPDATE vehicles SET rent_count=rent_count+1 WHERE id_vehicle=${id};`);
 };
 
+const decrementCount = (id) => new Promise((resolve, reject) => {
+  db.query(`UPDATE vehicles SET rent_count=rent_count-1 WHERE id_vehicle=${id};`, (err, res) => {
+    if (err) reject(err);
+    resolve(res);
+  });
+});
+
 module.exports = {
   countVehicle,
   getVehicles,
@@ -117,4 +124,5 @@ module.exports = {
   editVehicle,
   deleteVehicle,
   addRentCount,
+  decrementCount,
 };
