@@ -21,7 +21,8 @@ const getVehicles = (data, cb) => {
 const countVehicleCategory = (data, cb) => {
   db.query(`SELECT COUNT(*) as total FROM vehicles v
   LEFT JOIN categories c ON c.id_category=v.id_category
-  WHERE v.location LIKE '${data.location}%' AND (v.brand LIKE '${data.search}%' OR c.type LIKE '${data.search}%')`, (err, res) => {
+  WHERE v.location LIKE '${data.location}%' AND (v.brand LIKE '${data.search}%' OR c.type LIKE '${data.search}%') AND (v.price >= ${data.minimum} AND v.price <= ${data.maximum})
+  `, (err, res) => {
     if (err) throw err;
     cb(res);
   });

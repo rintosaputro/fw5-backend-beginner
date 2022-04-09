@@ -34,8 +34,8 @@ const getVehicleCategory = (req, res) => {
     const last = Math.ceil(total / limit);
     const results = resultsFin;
     const pageInfo = {
-      prev: page > 1 ? `http://localhost:5000/vehicles/category/?search=${search}&location=${location}&page=${page - 1}&limit=${limit}` : null,
-      next: page < last ? `http://localhost:5000/vehicles/category/?search=${search}&location=${location}&page=${page + 1}&limit=${limit}` : null,
+      prev: page > 1 ? `http://localhost:5000/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&page=${page - 1}&limit=${limit}` : null,
+      next: page < last ? `http://localhost:5000/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&page=${page + 1}&limit=${limit}` : null,
       totalData: total,
       currentPage: page,
       lastPage: last,
@@ -85,7 +85,7 @@ const addVehicle = (req, res) => {
     if (err) {
       return response(req, res, err.message, null, null, 400);
     }
-    if (req.user.role === 'Admin') {
+    if (req.user.role === 'admin') {
       const {
         id_category, brand, capacity, location, price, qty,
       } = req.body;
@@ -93,6 +93,8 @@ const addVehicle = (req, res) => {
       if (req.file) {
         image = req.file.path;
       }
+
+      console.log(req.body, req.file);
       if (image === undefined) {
         return response(req, res, 'Image not selected', null, null, 400);
       }
@@ -134,7 +136,7 @@ const editAllVehicle = (req, res) => {
     if (err) {
       return response(req, res, err.message, null, null, 400);
     }
-    if (req.user.role === 'Admin') {
+    if (req.user.role === 'admin') {
       const { id } = req.params;
       const {
         id_category, brand, capacity, location, price, qty, rent_count,
@@ -234,7 +236,7 @@ const editVehicle = (req, res) => {
 };
 
 const deleteVehicle = (req, res) => {
-  if (req.user.role === 'Admin') {
+  if (req.user.role === 'admin') {
     const { id } = req.params;
     vehicleModel.getVehicle(id, (vehicleDeleted) => {
       vehicleModel.deleteVehicle(id, (results) => {

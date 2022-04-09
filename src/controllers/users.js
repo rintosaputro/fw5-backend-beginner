@@ -27,71 +27,28 @@ const getUser = (req, res) => {
   });
 };
 
-const addUser = (req, res) => {
-  const {
-    name, username, email, password,
-  } = req.body;
-  if (name && username && email && password) {
-    if (!check.checkEmail(email)) {
-      return response(req, res, 'Wrong email input', null, null, 400);
-    }
-    // if (!check.checkPhone(phone_number)) {
-    //   return response(req, res, 'Wrong phone number input', null, null, 400);
-    // }
-    if (!check.checkPassword(password)) {
-      return response(req, res, 'Password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
-    }
-    const dataCheck = {
-      username, email,
-    };
-    return userModel.checkUser(dataCheck, async (user) => {
-      if (user.length > 0) {
-        return response(req, res, 'User name or email has been registered', null, null, 400);
-      }
-      const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
-      mail.sendMail({
-        from: APP_EMAIL,
-        to: email,
-        subject: 'Registration verification code | Vehicles Rent',
-        text: String(randomCode),
-        html: `<b>${randomCode}<b>`,
-      });
-      const salt = await bcrypt.genSalt(10);
-      const hash = await bcrypt.hash(password, salt);
-      const data = {
-        name, username, email, password: hash, confirm: randomCode,
-      };
-      return userModel.addUser(data, (rslt) => {
-        if (rslt.affectedRows === 0) {
-          return response(req, res, 'Unexpected error', null, null, 500);
-        }
-        userModel.newUser(rslt.insertId, (results) => response(req, res, `Verification code has been sent to ${email}`, results[0]));
-      });
-    });
-  }
-  return response(req, res, 'Failed to create user, data must be filled', null, null, 400);
-};
+// WITHOUT PHONENUMBER
 
 // const addUser = (req, res) => {
 //   const {
-//     name, username, email, password, phone_number,
+//     name, username, email, password,
 //   } = req.body;
-//   if (name && username && email && password && phone_number) {
+//   if (name && username && email && password) {
 //     if (!check.checkEmail(email)) {
 //       return response(req, res, 'Wrong email input', null, null, 400);
 //     }
-//     if (!check.checkPhone(phone_number)) {
-//       return response(req, res, 'Wrong phone number input', null, null, 400);
-//     }
+//     // if (!check.checkPhone(phone_number)) {
+//     //   return response(req, res, 'Wrong phone number input', null, null, 400);
+//     // }
 //     if (!check.checkPassword(password)) {
 //       return response(req, res, 'Password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
 //     }
 //     const dataCheck = {
-//       username, email, phone_number,
+//       username, email,
 //     };
 //     return userModel.checkUser(dataCheck, async (user) => {
 //       if (user.length > 0) {
-//         return response(req, res, 'User name or phone or email has been registered', null, null, 400);
+//         return response(req, res, 'User name or email has been registered', null, null, 400);
 //       }
 //       const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
 //       mail.sendMail({
@@ -104,7 +61,7 @@ const addUser = (req, res) => {
 //       const salt = await bcrypt.genSalt(10);
 //       const hash = await bcrypt.hash(password, salt);
 //       const data = {
-//         name, username, email, password: hash, phone_number, confirm: randomCode,
+//         name, username, email, password: hash, confirm: randomCode,
 //       };
 //       return userModel.addUser(data, (rslt) => {
 //         if (rslt.affectedRows === 0) {
@@ -116,6 +73,114 @@ const addUser = (req, res) => {
 //   }
 //   return response(req, res, 'Failed to create user, data must be filled', null, null, 400);
 // };
+
+// WITHOUT NAME
+
+const addUser = (req, res) => {
+  const {
+    username, email, password, phone_number, name,
+  } = req.body;
+  if (username && email && password) {
+    if (!check.checkEmail(email)) {
+      return response(req, res, 'Wrong email input', null, null, 400);
+    }
+    if (!check.checkPassword(password)) {
+      return response(req, res, 'Password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
+    }
+    const dataCheck = {
+      username, email, phone_number,
+    };
+    return userModel.checkUser(dataCheck, async (user) => {
+      if (user.length > 0) {
+        return response(req, res, 'User name or phone or email has been registered', null, null, 400);
+      }
+      // const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
+      // mail.sendMail({
+      //   from: APP_EMAIL,
+      //   to: email,
+      //   subject: 'Registration verification code | Vehicles Rent',
+      //   text: String(randomCode),
+      //   html: `<b>${randomCode}<b>`,
+      // });
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+      let data = {
+        username, email, password: hash, phone_number, confirm: false,
+      };
+      if (phone_number) {
+        if (!check.checkPhone(phone_number)) {
+          return response(req, res, 'Wrong phone number input', null, null, 400);
+        }
+        data = { ...data, phone_number };
+      }
+      if (name) {
+        const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
+        mail.sendMail({
+          from: APP_EMAIL,
+          to: email,
+          subject: 'Registration verification code | Vehicles Rent',
+          text: String(randomCode),
+          html: `<b>${randomCode}<b>`,
+        });
+        data = { ...data, name, confirm: randomCode };
+      }
+      return userModel.addUser(data, (rslt) => {
+        if (rslt.affectedRows === 0) {
+          return response(req, res, 'Unexpected error', null, null, 500);
+        }
+        userModel.newUser(rslt.insertId, (results) => response(req, res, `Verification code has been sent to ${email}`, results[0]));
+      });
+    });
+  }
+  return response(req, res, 'Failed to create user, data must be filled', null, null, 400);
+};
+
+// COMPLETE ADDUSER
+
+const addUserComplete = (req, res) => {
+  const {
+    name, username, email, password, phone_number,
+  } = req.body;
+  if (name && username && email && password && phone_number) {
+    if (!check.checkEmail(email)) {
+      return response(req, res, 'Wrong email input', null, null, 400);
+    }
+    if (!check.checkPhone(phone_number)) {
+      return response(req, res, 'Wrong phone number input', null, null, 400);
+    }
+    if (!check.checkPassword(password)) {
+      return response(req, res, 'Password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
+    }
+    const dataCheck = {
+      username, email, phone_number,
+    };
+    return userModel.checkUser(dataCheck, async (user) => {
+      if (user.length > 0) {
+        return response(req, res, 'User name or phone or email has been registered', null, null, 400);
+      }
+      const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
+      mail.sendMail({
+        from: APP_EMAIL,
+        to: email,
+        subject: 'Registration verification code | Vehicles Rent',
+        text: String(randomCode),
+        html: `<b>${randomCode}<b>`,
+      });
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+      const data = {
+        name, username, email, password: hash, phone_number, confirm: randomCode,
+      };
+      return userModel.addUser(data, (rslt) => {
+        if (rslt.affectedRows === 0) {
+          return response(req, res, 'Unexpected error', null, null, 500);
+        }
+        userModel.newUser(rslt.insertId, (results) => response(req, res, `Verification code has been sent to ${email}`, results[0]));
+      });
+    });
+  }
+  return response(req, res, 'Failed to create user, data must be filled', null, null, 400);
+};
 
 const editAllDataUser = (req, res) => {
   upload(req, res, async (err) => {
@@ -262,6 +327,7 @@ module.exports = {
   getUsers,
   getUser,
   addUser,
+  addUserComplete,
   editAllDataUser,
   editUser,
   deleteUser,

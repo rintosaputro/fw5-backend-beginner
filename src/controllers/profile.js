@@ -33,11 +33,13 @@ const updateProfile = async (req, res) => {
     if (req.file) {
       data.image = req.file.path.replace(/\\/g, '/');
     }
+    console.log(req.body, req.file);
     if (username) {
       const checkUser = await userModel.getUserByUserName(username);
       if (checkUser.length > 0) {
         return response(req, res, 'Username has been used', null, null, 400);
       }
+      data.username = username;
     }
     if (email) {
       if (!check.checkEmail(email)) {
@@ -67,7 +69,7 @@ const updateProfile = async (req, res) => {
           deleteImg.rm(user);
         }
         const results = await userModel.getUserById(id);
-        return response(req, res, 'Data user', results);
+        return response(req, res, 'Data user', results[0]);
       }
       return response(req, res, 'Unexpected error', null, null, 500);
     });

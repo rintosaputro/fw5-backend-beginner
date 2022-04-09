@@ -26,7 +26,7 @@ const getUser = (id, cb) => {
 };
 
 const getUserById = (id) => new Promise((resolve, reject) => {
-  db.query(`SELECT id_user, name, username, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, createdAt, updatedAt
+  db.query(`SELECT id_user, name, username, CONCAT('${APP_URL}/', image) AS image, gender, email, phone_number, address, birthdate, confirm, createdAt, updatedAt
   FROM users WHERE id_user = ?`, [id], (err, res) => {
     if (err) reject(err);
     resolve(res);
