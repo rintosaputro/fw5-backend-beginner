@@ -15,18 +15,24 @@ const getVehicles = (req, res) => {
 
 const getVehicleCategory = (req, res) => {
   let {
-    search, location, minimum, maximum, page, limit,
+    search, location, minimum, maximum, prepayment, sort, page, limit,
   } = req.query;
+  let resPrepayment;
+  if (prepayment === 'true') {
+    resPrepayment = 1;
+  }
   search = search || '';
   location = location || '';
   page = parseInt(page, 10) || 1;
   limit = parseInt(limit, 10) || 5;
   minimum = Number(minimum) || 0;
   maximum = Number(maximum) || 1000000000;
+  prepayment = resPrepayment || 0;
+  sort = sort || '';
 
   const offset = (page - 1) * limit;
   const data = {
-    search, location, minimum, maximum, limit, offset,
+    search, location, minimum, maximum, prepayment, sort, limit, offset,
   };
 
   vehicleModel.getVehicleCategory(data, (resultsFin) => vehicleModel.countVehicleCategory(data, (count) => {
@@ -34,8 +40,8 @@ const getVehicleCategory = (req, res) => {
     const last = Math.ceil(total / limit);
     const results = resultsFin;
     const pageInfo = {
-      prev: page > 1 ? `http://localhost:5000/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&page=${page - 1}&limit=${limit}` : null,
-      next: page < last ? `http://localhost:5000/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&page=${page + 1}&limit=${limit}` : null,
+      prev: page > 1 ? `http://localhost:5000/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&prepayment=${prepayment}&sort=${sort}&page=${page - 1}&limit=${limit}` : null,
+      next: page < last ? `http://localhost:5000/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&prepayment=${prepayment}&sort=${sort}&page=${page + 1}&limit=${limit}` : null,
       totalData: total,
       currentPage: page,
       lastPage: last,
