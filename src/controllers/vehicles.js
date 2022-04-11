@@ -9,6 +9,8 @@ const upload = require('../helpers/upload').single('image');
 const response = require('../helpers/response');
 const deleteImg = require('../helpers/deleteImg');
 
+const { APP_URL } = process.env;
+
 const getVehicles = (req, res) => {
   helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
 };
@@ -40,8 +42,8 @@ const getVehicleCategory = (req, res) => {
     const last = Math.ceil(total / limit);
     const results = resultsFin;
     const pageInfo = {
-      prev: page > 1 ? `http://localhost:5000/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&prepayment=${prepayment}&sort=${sort}&page=${page - 1}&limit=${limit}` : null,
-      next: page < last ? `http://localhost:5000/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&prepayment=${prepayment}&sort=${sort}&page=${page + 1}&limit=${limit}` : null,
+      prev: page > 1 ? `${APP_URL}/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&prepayment=${prepayment}&sort=${sort}&page=${page - 1}&limit=${limit}` : null,
+      next: page < last ? `${APP_URL}/vehicles/category/?search=${search}&maximum=${maximum}&minimum=${minimum}&location=${location}&prepayment=${prepayment}&sort=${sort}&page=${page + 1}&limit=${limit}` : null,
       totalData: total,
       currentPage: page,
       lastPage: last,
