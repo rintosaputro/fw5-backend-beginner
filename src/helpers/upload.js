@@ -1,9 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 const multer = require('multer');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, './uploads/');
+    // cb(null, './uploads/');
+    // eslint-disable-next-line no-unused-vars
+    fs.mkdir('./uploads/', (err) => {
+      cb(null, './uploads/');
+    });
   },
   filename(req, file, cb) {
     const _file = file.originalname.split('.');
