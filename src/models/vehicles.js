@@ -28,7 +28,7 @@ const countVehicleCategory = (data, cb) => {
   }
   db.query(`SELECT COUNT(*) as total FROM vehicles v
   LEFT JOIN categories c ON c.id_category=v.id_category
-  WHERE v.location LIKE '${data.location}%' AND (v.brand LIKE '${data.search}%' OR c.type LIKE '${data.search}%') AND (v.price >= ${data.minimum} AND v.price <= ${data.maximum}) AND payment >= ${data.prepayment}
+  WHERE v.location LIKE '${data.location}%' AND (v.brand LIKE '${data.search}%' OR c.type LIKE '${data.search}%') AND (v.price >= ${data.minimum} AND v.price <= ${data.maximum}) AND payment >= ${data.prepayment} 
   ${sort}`, (err, res) => {
     if (err) throw err;
     cb(res);
@@ -40,13 +40,16 @@ const getVehicleCategory = (data, cb) => {
   if (data.sort === 'popular') {
     sort = 'ORDER BY v.rent_count DESC';
   }
+  if (data.sort === 'not popular') {
+    sort = 'ORDER BY v.rent_count ASC';
+  }
   if (data.sort === 'latest') {
     sort = 'ORDER BY v.id_vehicle DESC';
   }
   db.query(`SELECT v.id_vehicle, v.id_category, v.type, v.brand , CONCAT('${APP_URL}/', v.image) AS image, v.capacity, v.location, v.price, v.qty, v.payment, v.rent_count, v.status, v.createdAt, v.updatedAt
   FROM vehicles v 
   LEFT JOIN categories c ON v.id_category = c.id_category 
-  WHERE v.location LIKE '${data.location}%' AND (v.brand LIKE '${data.search}%' OR c.type LIKE '${data.search}%') AND (v.price >= ${data.minimum} AND v.price <= ${data.maximum}) AND payment >= ${data.prepayment}
+  WHERE v.location LIKE '${data.location}%' AND (v.brand LIKE '${data.search}%' OR c.type LIKE '${data.search}%') AND (v.price >= ${data.minimum} AND v.price <= ${data.maximum}) AND payment >= ${data.prepayment} 
   ${sort} LIMIT ${data.limit} OFFSET ${data.offset};
   `, (err, res) => {
     if (err) throw err;

@@ -225,7 +225,14 @@ const editVehicle = (req, res) => {
             return response(req, res, 'rent_count must be number', null, null, 404);
           }
         }
-
+        if (req.body.status) {
+          if (req.body.status === '1') {
+            data.status = '1';
+          }
+          if (req.body.status === '2') {
+            data.status = '2';
+          }
+        }
         if (Object.keys(data).length > 0) {
           return vehicleModel.editAllVehicle(data, id, (results) => {
             if (results.affectedRows > 0) {

@@ -67,7 +67,7 @@ const forgotRequest = async (req, res) => {
         mail.sendMail({
           from: APP_EMAIL,
           to: email,
-          subject: 'Your verification code for reset password | Vehicles Rent',
+          subject: 'Your verification code for reset password | Isi Rent',
           text: String(randomCode),
           html: `<b>${randomCode}<b>`,
         });
@@ -139,7 +139,7 @@ const sendCodeVerify = async (req, res) => {
   mail.sendMail({
     from: APP_EMAIL,
     to: email,
-    subject: 'Verification code | Vehicles Rent',
+    subject: 'Verification code | Isi Rent',
     text: String(randomCode),
     html: `<b>${randomCode}<b>`,
   });
