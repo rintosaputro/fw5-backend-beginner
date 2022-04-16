@@ -19,9 +19,12 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   const typeImage = ['image/jpeg', 'image/png', 'image/gir'];
+  const fileSize = parseInt(req.headers['content-length'], 10);
 
   if (!typeImage.includes(file.mimetype)) {
     cb(new Error('Image type mismatch'), false);
+  } else if (fileSize >= 2000000) {
+    cb(new Error('Image file is too large, max size 2 mb'), false);
   } else {
     cb(null, true);
   }
