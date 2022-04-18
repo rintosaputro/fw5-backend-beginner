@@ -6,7 +6,6 @@ const {
 const { addUser, addUserComplete } = require('../controllers/users');
 
 user.post('/login', login);
-// user.post('/verify', verify);
 user.post('/forgotPassword', forgotRequest);
 user.post('/register', addUser);
 user.post('/complete-register', addUserComplete);

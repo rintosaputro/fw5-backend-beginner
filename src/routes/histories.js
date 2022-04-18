@@ -6,7 +6,6 @@ const {
 } = require('../controllers/histories');
 const { verifyUser } = require('../helpers/auth');
 
-// history.get('/', verifyUser, getHistories);
 history.get('/', getHistories);
 history.get('/filter', getHistoriesByFilter);
 history.post('/', verifyUser, addHistory);

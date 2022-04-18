@@ -12,22 +12,8 @@ const helperGet = require('../helpers/get');
 const response = require('../helpers/response');
 const check = require('../helpers/check');
 
-// const getHistories = (req, res) => {
-//   const username = req.user.role;
-//   if (username === 'Admin') {
-//     helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
-//   } else {
-//     helperGet(req, res, historyModel.getHistoriesByUsername, historyModel.countHistoryByUsername, 'histories', username);
-//   }
-// };
 const getHistories = (req, res) => {
   helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
-  // const username = req.user.role;
-  // if (username === 'Admin') {
-  //   helperGet(req, res, historyModel.getHistories, historyModel.countHistory, 'histories');
-  // } else {
-  //   helperGet(req, res, historyModel.getHistoriesByUsername, historyModel.countHistoryByUsername, 'histories', username);
-  // }
 };
 
 const getHistoriesByFilter = async (req, res) => {

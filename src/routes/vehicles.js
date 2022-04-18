@@ -2,7 +2,6 @@ const vehicles = require('express').Router();
 
 const {
   getVehicles,
-  // getVehicleCategory,
   getVehicle,
   getNewVehicle,
   addVehicle,
@@ -14,7 +13,6 @@ const { verifyUser } = require('../helpers/auth');
 
 vehicles.get('/', getVehicles);
 vehicles.post('/', verifyUser, addVehicle);
-// vehicles.get('/', getVehicleCategory);
 vehicles.get('/new', getNewVehicle);
 vehicles.get('/:id', getVehicle);
 vehicles.put('/:id', verifyUser, editAllVehicle);

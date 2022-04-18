@@ -3,17 +3,12 @@
 /* eslint-disable prefer-const */
 /* eslint-disable camelcase */
 const vehicleModel = require('../models/vehicles');
-// const helperGet = require('../helpers/get');
 const categoriesModel = require('../models/categories');
 const upload = require('../helpers/upload').single('image');
 const response = require('../helpers/response');
 const deleteImg = require('../helpers/deleteImg');
 
 const { APP_URL } = process.env;
-
-// const getVehicles = (req, res) => {
-//   helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
-// };
 
 const getVehicles = (req, res) => {
   let {
@@ -51,24 +46,6 @@ const getVehicles = (req, res) => {
 
     return response(req, res, 'List vehicles', results, pageInfo);
   }));
-  // if (resultsFin.length > 0) {
-  //   return vehicleModel.countVehicleCategory(data, (count) => {
-  //     const { total } = count[0];
-  //     const last = Math.ceil(total / limit);
-  //     const results = resultsFin;
-  //     const pageInfo = {
-  //       prev: page > 1 ? `http://localhost:5000/vehicles/category/?search=${search}&filter=${filter}&page=${page - 1}&limit=${limit}` : null,
-  //       next: page < last ? `http://localhost:5000/vehicles/category/?search=${search}&filter=${filter}&page=${page + 1}&limit=${limit}` : null,
-  //       totalData: total,
-  //       currentPage: page,
-  //       lastPage: last,
-  //     };
-
-  //     return response(req, res, `List vehicles by category ${filter}`, results, pageInfo);
-  //   });
-  // }
-  // return response(req, res, 'Page not found', null, null, 404);
-  // );
 };
 
 const getVehicle = async (req, res) => {
@@ -269,7 +246,6 @@ const deleteVehicle = (req, res) => {
 
 module.exports = {
   getVehicles,
-  // getVehicleCategory,
   getVehicle,
   getNewVehicle,
   addVehicle,

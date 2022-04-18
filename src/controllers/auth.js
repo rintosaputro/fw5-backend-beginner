@@ -13,10 +13,6 @@ const login = async (req, res) => {
   const { username, password } = req.body;
   const result = await userModel.getUserByUserName(username);
   if (result.length > 0) {
-    // Validation if verify false cant login
-    // if (result[0].confirm) {
-    //   return response(req, res, 'Please confirm your registration', null, null, 400);
-    // }
     const hash = result[0].password;
     const validatePwd = await bcrypt.compare(password, hash);
     if (validatePwd) {
@@ -126,11 +122,6 @@ const sendCodeVerify = async (req, res) => {
   if (emailResult.length === 0) {
     return response(req, res, 'Your email is not registered', null, null, 400);
   }
-  // if (checkConfirm === 'null') {
-  //   console.log('ok')
-  // }
-  // console.log(checkConfirm);
-  // return response(req, res, 'Your account has been verified');
   if (checkConfirm === 'null') {
     console.log(checkConfirm);
     return response(req, res, 'Your account has been verified');
