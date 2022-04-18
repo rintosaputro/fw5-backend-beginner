@@ -3,7 +3,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable camelcase */
 const vehicleModel = require('../models/vehicles');
-const helperGet = require('../helpers/get');
+// const helperGet = require('../helpers/get');
 const categoriesModel = require('../models/categories');
 const upload = require('../helpers/upload').single('image');
 const response = require('../helpers/response');
@@ -11,11 +11,11 @@ const deleteImg = require('../helpers/deleteImg');
 
 const { APP_URL } = process.env;
 
-const getVehicles = (req, res) => {
-  helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
-};
+// const getVehicles = (req, res) => {
+//   helperGet(req, res, vehicleModel.getVehicles, vehicleModel.countVehicle, 'vehicles');
+// };
 
-const getVehicleCategory = (req, res) => {
+const getVehicles = (req, res) => {
   let {
     search, location, minimum, maximum, prepayment, sort, page, limit,
   } = req.query;
@@ -269,7 +269,7 @@ const deleteVehicle = (req, res) => {
 
 module.exports = {
   getVehicles,
-  getVehicleCategory,
+  // getVehicleCategory,
   getVehicle,
   getNewVehicle,
   addVehicle,
