@@ -168,62 +168,65 @@ const editVehicle = (req, res) => {
     if (err) {
       return response(req, res, err.message, null, null, 400);
     }
-    const { id } = req.params;
-    return vehicleModel.getVehicle(id, (vehicle) => {
-      if (vehicle.length > 0) {
-        const data = {};
-        const input = ['id_category', 'brand', 'capacity', 'location', 'price', 'qty', 'rent_count'];
-        input.forEach((item) => {
-          if (req.body[item] && req.body[item] !== undefined) {
-            data[item] = req.body[item];
-          }
-        });
-        if (req.file) {
-          data.image = req.file.path.replace(/\\/g, '/');
-        }
-        if (data.id_category) {
-          categoriesModel.getCategory(data.id_category, (category) => {
-            if (category.length === 0) {
-              return response(req, res, 'id category is not available', null, null, 400);
+    if (req.user.role === 'admin') {
+      const { id } = req.params;
+      return vehicleModel.getVehicle(id, (vehicle) => {
+        if (vehicle.length > 0) {
+          const data = {};
+          const input = ['id_category', 'brand', 'capacity', 'location', 'price', 'qty', 'rent_count'];
+          input.forEach((item) => {
+            if (req.body[item] && req.body[item] !== undefined) {
+              data[item] = req.body[item];
             }
           });
-        }
-        const pola = /\D/g;
-        if (data.price) {
-          if (pola.test(data.price)) {
-            return response(req, res, 'price must be number', null, null, 404);
+          if (req.file) {
+            data.image = req.file.path.replace(/\\/g, '/');
           }
-        }
-        if (data.qty) {
-          if (pola.test(data.qty)) {
-            return response(req, res, 'qty must be number', null, null, 404);
+          if (data.id_category) {
+            categoriesModel.getCategory(data.id_category, (category) => {
+              if (category.length === 0) {
+                return response(req, res, 'id category is not available', null, null, 400);
+              }
+            });
           }
-        }
-        if (data.rent_count) {
-          if (pola.test(data.rent_count)) {
-            return response(req, res, 'rent_count must be number', null, null, 404);
-          }
-        }
-        if (req.body.status) {
-          if (req.body.status === '1') {
-            data.status = '1';
-          }
-          if (req.body.status === '2') {
-            data.status = '2';
-          }
-        }
-        if (Object.keys(data).length > 0) {
-          return vehicleModel.editAllVehicle(data, id, (results) => {
-            if (results.affectedRows > 0) {
-              return vehicleModel.getVehicle(id, (edited) => response(req, res, 'Data vehicle', edited, null));
+          const pola = /\D/g;
+          if (data.price) {
+            if (pola.test(data.price)) {
+              return response(req, res, 'price must be number', null, null, 404);
             }
-            return response(req, res, 'Failed to update vehicle', null, null, 500);
-          });
+          }
+          if (data.qty) {
+            if (pola.test(data.qty)) {
+              return response(req, res, 'qty must be number', null, null, 404);
+            }
+          }
+          if (data.rent_count) {
+            if (pola.test(data.rent_count)) {
+              return response(req, res, 'rent_count must be number', null, null, 404);
+            }
+          }
+          if (req.body.status) {
+            if (req.body.status === '1') {
+              data.status = '1';
+            }
+            if (req.body.status === '2') {
+              data.status = '2';
+            }
+          }
+          if (Object.keys(data).length > 0) {
+            return vehicleModel.editAllVehicle(data, id, (results) => {
+              if (results.affectedRows > 0) {
+                return vehicleModel.getVehicle(id, (edited) => response(req, res, 'Data vehicle', edited, null));
+              }
+              return response(req, res, 'Failed to update vehicle', null, null, 500);
+            });
+          }
+          return response(req, res, 'No data changed on vehicle', null, null, 400);
         }
-        return response(req, res, 'No data changed on vehicle', null, null, 400);
-      }
-      return response(req, res, 'Vehicle not available', null, null, 404);
-    });
+        return response(req, res, 'Vehicle not available', null, null, 404);
+      });
+    }
+    return response(req, res, 'Only admin can update vehicle', null, null, 403);
   });
 };
 
