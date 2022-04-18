@@ -1,5 +1,5 @@
 ## About
-Repository Fullstack Web 5 Backend beginner Rent Vehicles
+Repository Isi Rent
 
 #### Auth Endpoint
 | METHOD | API | REMARKS |
@@ -63,7 +63,11 @@ Repository Fullstack Web 5 Backend beginner Rent Vehicles
 | ```PUT``` | /categories/:id | Update ALl Data History By idCategory |
 | ```DELETE``` | /categories/:id | Delete Category By idCategory |
 
-## Instalation
+## How to Use This API
+
+### with API Url
+https://isi-rent.herokuapp.com
+### Manual Instalation
 
 1. Clone this repo
 ```
