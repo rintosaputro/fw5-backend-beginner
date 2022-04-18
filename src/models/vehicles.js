@@ -23,6 +23,9 @@ const countVehicleCategory = (data, cb) => {
   if (data.sort === 'popular') {
     sort = 'ORDER BY v.rent_count DESC';
   }
+  if (data.sort === 'not popular') {
+    sort = 'ORDER BY v.rent_count ASC';
+  }
   if (data.sort === 'latest') {
     sort = 'ORDER BY v.id_vehicle DESC';
   }
