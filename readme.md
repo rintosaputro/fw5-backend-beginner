@@ -1,5 +1,5 @@
 ## About
-Repository Isi Rent
+Repository Backend Isi Rent
 
 #### Auth Endpoint
 | METHOD | API | REMARKS |
