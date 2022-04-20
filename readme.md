@@ -22,24 +22,23 @@ npm install
 3. Import Database
 ```
 Open phpMyAdmin, chose databases
-
-![](images/chose-databases.png)
 ```
+![](images/chose-databases.png)
+
 ```
 Chose menu import
-
-![](images/import-tab.png)
 ```
+![](images/import-tab.png)
+
 ```
 Click  chose file button and select the rent_vehicles.sql file
-
-![](images/chose-file.png)
 ```
+![](images/chose-file.png)
+
 ```
 Click go button
-
-![](images/go.png)
 ```
+![](images/go.png)
 
 4. Runt Apps
 ```
