@@ -23,22 +23,22 @@ npm install
 ```
 Open phpMyAdmin, chose databases
 
-<img width="328" alt="chose databases" src="https://user-images.githubusercontent.com/88695932/164181812-15c4e076-81c6-445b-bcaf-5ca5f124be6e.png">
+![](images/chose-databases.png)
 ```
 ```
 Chose menu import
 
-<img width="907" alt="klik import tab" src="https://user-images.githubusercontent.com/88695932/164186478-82ddf37a-3ec7-4e2d-ac75-4110d4829ea7.png">
+![](images/import-tab.png)
 ```
 ```
 Click  chose file button and select the rent_vehicles.sql file
 
-<img width="907" alt="chose file" src="https://user-images.githubusercontent.com/88695932/164187148-1040e591-3607-442e-bacd-93257b988b08.png">
+![](images/chose-file.png)
 ```
 ```
 Click go button
 
-<img width="945" alt="go" src="https://user-images.githubusercontent.com/88695932/164187874-2f375056-8d7b-4baf-aaf0-e1bc2408c6d3.png">
+![](images/go.png)
 ```
 
 4. Runt Apps
