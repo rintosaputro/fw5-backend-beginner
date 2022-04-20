@@ -1,5 +1,52 @@
+# Isi Rent Backend
+
 ## About
-Repository Backend Isi Rent
+Backend repository for Isi Rent applications, which is built with express js and mysql. In this application we can register by email and make a reservation to rent some vehicles.
+
+## How to Use This API
+
+### with API Url
+https://isi-rent.herokuapp.com
+### Manual Instalation
+
+1. Clone this repo
+```
+git clone https://github.com/rintosaputro/isi-rent-backend.git
+```
+
+2. Install module
+```
+npm install
+```
+
+3. Import Database
+```
+Open phpMyAdmin, chose databases
+
+<img width="328" alt="chose databases" src="https://user-images.githubusercontent.com/88695932/164181812-15c4e076-81c6-445b-bcaf-5ca5f124be6e.png">
+```
+```
+Chose menu import
+
+<img width="907" alt="klik import tab" src="https://user-images.githubusercontent.com/88695932/164186478-82ddf37a-3ec7-4e2d-ac75-4110d4829ea7.png">
+```
+```
+Click  chose file button and select the rent_vehicles.sql file
+
+<img width="907" alt="chose file" src="https://user-images.githubusercontent.com/88695932/164187148-1040e591-3607-442e-bacd-93257b988b08.png">
+```
+```
+Click go button
+
+<img width="945" alt="go" src="https://user-images.githubusercontent.com/88695932/164187874-2f375056-8d7b-4baf-aaf0-e1bc2408c6d3.png">
+```
+
+4. Runt Apps
+```
+npm run start
+```
+
+5. Done
 
 #### Auth Endpoint
 | METHOD | API | REMARKS |
@@ -62,24 +109,3 @@ Repository Backend Isi Rent
 | ```PATCH``` | /categories/:id | Update Some Data History By idCategory |
 | ```PUT``` | /categories/:id | Update ALl Data History By idCategory |
 | ```DELETE``` | /categories/:id | Delete Category By idCategory |
-
-## How to Use This API
-
-### with API Url
-https://isi-rent.herokuapp.com
-### Manual Instalation
-
-1. Clone this repo
-```
-git clone https://github.com/rintosaputro/fw5-backend-beginner.git
-```
-
-2. Install module
-```
-npm install
-```
-
-3. Import Database
-import rent_vehicles.sql
-
-4. Done
