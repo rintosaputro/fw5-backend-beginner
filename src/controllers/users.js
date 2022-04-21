@@ -87,12 +87,18 @@ const addUser = (req, res) => {
     if (!check.checkPassword(password)) {
       return response(req, res, 'Password must be at least 6 characters must contain numeric lowercase and uppercase letter.', null, null, 400);
     }
-    const dataCheck = {
-      username, email, phone_number,
+    let dataCheck = {
+      username, email,
     };
+    if (phone_number) {
+      dataCheck = { ...dataCheck, phone_number };
+    }
     return userModel.checkUser(dataCheck, async (user) => {
       if (user.length > 0) {
-        return response(req, res, 'User name or phone or email has been registered', null, null, 400);
+        if (phone_number) {
+          return response(req, res, 'User name or phone or email has been registered', null, null, 400);
+        }
+        return response(req, res, 'User name or email has been registered', null, null, 400);
       }
       // const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
       // mail.sendMail({
@@ -105,7 +111,7 @@ const addUser = (req, res) => {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
       let data = {
-        username, email, password: hash, phone_number, confirm: false,
+        username, email, password: hash, confirm: false,
       };
       if (phone_number) {
         if (!check.checkPhone(phone_number)) {
