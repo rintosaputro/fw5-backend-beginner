@@ -100,7 +100,7 @@ const addUser = (req, res) => {
         }
         return response(req, res, 'User name or email has been registered', null, null, 400);
       }
-      // const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000);
+      // const randomCode = Math.round(Math.random() * (9999 - 1000) + 1000)
       // mail.sendMail({
       //   from: APP_EMAIL,
       //   to: email,
