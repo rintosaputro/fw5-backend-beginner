@@ -5,8 +5,14 @@ require('dotenv').config();
 const app = express();
 
 const cors = require('cors');
+// const { path } = require('express/lib/application');
 
 app.use(express.urlencoded({ extended: true }));
+// app.use(express.static(__dirname));
+
+// app.get('/*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'index.html'));
+// });
 
 app.use(cors());
 

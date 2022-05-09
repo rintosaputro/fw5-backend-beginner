@@ -1,6 +1,10 @@
 const db = require('../helpers/db');
 
-const { APP_URL } = process.env;
+let APP_URL = '';
+const { ENVIRONTMENT } = process.env;
+if (ENVIRONTMENT === 'production') {
+  APP_URL = `${process.env.APP_URL}/`;
+}
 
 const countHistory = (data, cb) => {
   db.query(`SELECT COUNT(*) AS total FROM histories h 
@@ -14,7 +18,7 @@ const countHistory = (data, cb) => {
 };
 
 const getHistories = (data, cb) => {
-  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, CONCAT('${APP_URL}/', v.image) AS image, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, CONCAT('${APP_URL}', v.image) AS image, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle 
   WHERE v.type LIKE '${data.search}%' OR v.brand LIKE '${data.search}%' OR v.location LIKE '${data.search}%' OR u.name LIKE '${data.search}%' OR u.username LIKE '${data.search}%' OR h.createdAt LIKE '${data.search}%'
   ORDER by h.id_history DESC
@@ -36,7 +40,7 @@ const countHistoryFilter = (data, cb) => {
 };
 
 const getHistoriesFilter = (data) => new Promise((resolve, reject) => {
-  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, CONCAT('${APP_URL}/', v.image) AS image, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, CONCAT('${APP_URL}', v.image) AS image, v.brand, v.location, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle 
   WHERE v.type LIKE '${data.type}%' AND v.location LIKE '${data.location}%' AND h.createdAt LIKE '${data.createdAt}%'
   ORDER by h.id_history ${data.sort} LIMIT ${data.limit} OFFSET ${data.offset};`, (err, res) => {
@@ -77,7 +81,7 @@ const getHistory = (id, cb) => {
 };
 
 const getHistoryUser = (idHistory, idUser) => new Promise((resolve, reject) => {
-  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location,CONCAT('${APP_URL}/', v.image) AS image, v.price, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location,CONCAT('${APP_URL}', v.image) AS image, v.price, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle  
   WHERE h.id_history=? AND h.id_user=?`, [idHistory, idUser], (err, res) => {
     if (err) reject(err);
@@ -86,7 +90,7 @@ const getHistoryUser = (idHistory, idUser) => new Promise((resolve, reject) => {
 });
 
 const getHistoryAsync = (id) => new Promise((resolve, reject) => {
-  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, CONCAT('${APP_URL}/', v.image) AS image, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
+  db.query(`SELECT id_history, h.id_user, u.name, u.username, u.phone_number, v.id_vehicle, v.type, v.brand, v.location, CONCAT('${APP_URL}', v.image) AS image, h.rent_start_date, h.rent_end_date, prepayment, h.status, h.createdAt, h.updatedAt 
   FROM histories h LEFT JOIN users u ON h.id_user = u.id_user LEFT JOIN vehicles v ON h.id_vehicle = v.id_vehicle  
   WHERE id_history=?`, [id], (err, res) => {
     if (err) reject(err);
