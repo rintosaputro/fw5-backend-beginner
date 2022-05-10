@@ -78,8 +78,6 @@ const addVehicle = (req, res) => {
       if (req.file) {
         image = req.file.path;
       }
-
-      console.log(req.body, req.file);
       if (image === undefined) {
         return response(req, res, 'Image not selected', null, null, 400);
       }
