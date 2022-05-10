@@ -19,7 +19,9 @@ git clone https://github.com/rintosaputro/isi-rent-backend.git
 npm install
 ```
 
-3. Import Database
+3. create an .env file and match its contents with the .env.example file
+
+4. Import Database
 ```
 Open phpMyAdmin, chose databases
 ```
@@ -40,12 +42,12 @@ Click go button
 ```
 ![](images/go.png)
 
-4. Runt Apps
+5. Run App
 ```
 npm run start
 ```
 
-5. Done
+6. Done
 
 #### Auth Endpoint
 | METHOD | API | REMARKS |
