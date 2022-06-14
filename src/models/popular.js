@@ -1,6 +1,5 @@
 const db = require('../helpers/db');
 
-// const { APP_URL } = process.env;
 let APP_URL = '';
 const { ENVIRONTMENT } = process.env;
 if (ENVIRONTMENT === 'production') {

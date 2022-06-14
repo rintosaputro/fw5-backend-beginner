@@ -107,13 +107,6 @@ const newHistory = (cb) => {
   });
 };
 
-// const addHistory = (data, cb) => {
-//   db.query('INSERT INTO histories SET ?', [data], (err, res) => {
-//     if (err) throw err;
-//     cb(res);
-//   });
-// };
-
 const addHistory = (data) => new Promise((resolve, reject) => {
   db.query('INSERT INTO histories SET ?', [data], (err, res) => {
     if (err) reject(err);
